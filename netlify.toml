@@ -1,0 +1,5 @@
+[build]
+  # installer les dépendances puis générer
+  command = "pip install -r requirements.txt && make html"
+  publish = "build/html"        # ou dossier de sortie de votre générateur
+  environment = { PYTHON_VERSION = "3.11" }
