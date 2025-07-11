@@ -58,9 +58,6 @@ looseversion==1.2.0
 lxml==4.9.2
 MarkupSafe==3.0.2
 matplotlib==3.8.2
-mysql==0.0.3
-mysql-connector-python==8.0.33
-mysqlclient==2.2.0
 narwhals==1.46.0
 networkx==3.1
 nibabel==5.1.0
