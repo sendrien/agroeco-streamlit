@@ -141,9 +141,9 @@ h2 {
     border-bottom: 2.5px solid #027368 !important;
 }
 .stTabs [data-baseweb="tab"] {
-    color: blue !important;
+    color: #5C7373 !important;
     font-weight: 600;
-    font-size: 1.09em;
+    font-size: 10.09em;
     transition: color 0.4s;
 }
 .stTabs [aria-selected="true"] {
