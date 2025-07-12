@@ -1,70 +1,52 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Synthèse AGROECO", layout="wide")
+st.set_page_config(page_title="Tableau AGROECO", layout="wide")
+st.title("Tableau synthétique – Indicateurs AGROECO")
 
-st.title("Synthèse des indicateurs – Outil AGROECO")
+# Données statiques inspirées de ta structure
+indicateurs = [
+    {
+        "dimension": "Dimension environnementale",
+        "indicateur": "Indicateur 1 : Accès à l’eau",
+        "categories": [
+            {"N°": 1, "Catégorie d'acteurs": "Petits exploitants agricoles familiaux", "Score moyen": 1.44},
+            {"N°": 2, "Catégorie d'acteurs": "Consommateurs", "Score moyen": 1.70},
+            {"N°": 3, "Catégorie d'acteurs": "ONG", "Score moyen": 2.70},
+            {"N°": 4, "Catégorie d'acteurs": "Société civile", "Score moyen": 2.50},
+            {"N°": 5, "Catégorie d'acteurs": "Autorités administratives", "Score moyen": 2.00},
+            {"N°": 6, "Catégorie d'acteurs": "Structures de formation/recherche", "Score moyen": 2.50},
+            {"N°": 7, "Catégorie d'acteurs": "Systèmes de garantie qualité", "Score moyen": 2.30},
+        ],
+        "score_global": 2.23
+    },
+    {
+        "dimension": "Dimension environnementale",
+        "indicateur": "Indicateur 2 : Conservation des sols",
+        "categories": [
+            {"N°": 1, "Catégorie d'acteurs": "Petits exploitants agricoles familiaux", "Score moyen": 2.00},
+            {"N°": 2, "Catégorie d'acteurs": "Consommateurs", "Score moyen": 1.60},
+            {"N°": 3, "Catégorie d'acteurs": "ONG", "Score moyen": 3.20},
+            {"N°": 4, "Catégorie d'acteurs": "Société civile", "Score moyen": 2.70},
+            {"N°": 5, "Catégorie d'acteurs": "Autorités administratives", "Score moyen": 2.40},
+            {"N°": 6, "Catégorie d'acteurs": "Structures de formation/recherche", "Score moyen": 2.80},
+            {"N°": 7, "Catégorie d'acteurs": "Systèmes de garantie qualité", "Score moyen": 1.90},
+        ],
+        "score_global": 2.37
+    },
+    # Tu peux ajouter ici d'autres indicateurs selon le même modèle…
+]
 
-uploaded_file = st.file_uploader(
-    "Chargez votre fichier Excel (structure AGROECO attendue)", 
-    type=["xlsx"]
-)
+# Affichage du tableau pour chaque indicateur
+for bloc in indicateurs:
+    st.markdown(f"### {bloc['dimension']} — {bloc['indicateur']}")
+    df = pd.DataFrame(bloc["categories"])
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True
+    )
+    st.markdown(f"<div style='font-size:18px; margin-top:10px;'><b>Score moyen global pour la dimension :</b> {bloc['score_global']}</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
-def extract_blocks(df):
-    blocks = []
-    n = len(df)
-    i = 0
-    while i < n:
-        # Recherche d'une ligne de type 'Indicateur X'
-        if pd.notna(df.iloc[i, 1]) and "Indicateur" in str(df.iloc[i, 1]):
-            indicateur = str(df.iloc[i, 1])
-            dimension = str(df.iloc[i-1, 0]) if i >= 1 else ""
-            entete = df.iloc[i+1, 1:4].tolist()
-            start = i + 2
-            # Recherche des 7 lignes de catégories, s'arrête à la prochaine ligne "Indicateur" ou à la fin
-            cat_rows = []
-            j = start
-            while j < n and pd.isna(df.iloc[j, 1]) and not (pd.notna(df.iloc[j, 3]) and "Indicateur" in str(df.iloc[j, 3])):
-                if pd.notna(df.iloc[j, 2]):  # Nom catégorie présent
-                    cat = [
-                        df.iloc[j, 1],  # N°
-                        df.iloc[j, 2],  # Catégorie
-                        df.iloc[j, 3]   # Score
-                    ]
-                    cat_rows.append(cat)
-                j += 1
-                if len(cat_rows) == 7:
-                    break
-            # Recherche score moyen global par dimension
-            score_global = df.iloc[i, 4] if i < n and df.shape[1] >= 5 else None
-            blocks.append({
-                "dimension": dimension,
-                "indicateur": indicateur,
-                "entete": entete,
-                "categories": cat_rows,
-                "score_global": score_global
-            })
-            i = j
-        else:
-            i += 1
-    return blocks
-
-if uploaded_file:
-    # Lecture du fichier (feuille "Tous les résultats")
-    df = pd.read_excel(uploaded_file, sheet_name="Tous les résultats", header=None)
-    blocks = extract_blocks(df)
-    
-    for block in blocks:
-        st.markdown(f"### {block['dimension']} - {block['indicateur']}")
-        data = pd.DataFrame(
-            block["categories"], 
-            columns=["N°", "Catégorie d'acteurs", "Score moyen"]
-        )
-        st.table(data)
-        if block["score_global"] is not None and pd.notna(block["score_global"]):
-            st.markdown(f"**Score moyen global pour la dimension :** {block['score_global']}")
-        st.markdown("---")
-
-else:
-    st.info("Veuillez charger un fichier pour afficher les résultats.")
-
+st.info("Ce tableau reproduit fidèlement la structure de la feuille 'Tous les résultats' avec des données statiques. Tu peux l’adapter selon tes besoins et tes propres valeurs.")
