@@ -1,49 +1,125 @@
+#!/usr/bin/env python3
+"""
+Streamlit app pour charger le fichier AGROECO et afficher automatiquement
+les visualisations synthétiques (barres, courbes, heatmap) des indicateurs
+et indices de collaboration (Graphiques finaux).
+"""
+import io
 import streamlit as st
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Données statiques fidèles à la structure
-indicateurs = [
-    {"nom": "Indicateur 1", "scores": [1.44, 1.7, 2.7, 2.5, 2.0, 2.5, None], "score_global": 2.52},
-    {"nom": "Indicateur 2", "scores": [2.0, 1.6, 3.2, 3.5, 3.0, 3.0, 3.0], "score_global": None},
-    {"nom": "Indicateur 3", "scores": [1.8, 2.1, 2.9, 3.0, 2.2, 2.8, 3.1], "score_global": None},
-]
+# --- Fonctions de tracés ---
+def plot_bar_chart(df, x_col, y_col, title):
+    fig, ax = plt.subplots()
+    ax.bar(df[x_col], df[y_col])
+    ax.set_title(title)
+    ax.set_xlabel(x_col)
+    ax.set_ylabel(y_col)
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    return fig
 
-categories = [
-    "Petits exploitants agricoles familiaux",
-    "Consommateurs",
-    "Membres des Organisations non gouvernementales",
-    "Membres des Organisations de la société civile",
-    "Autorités administratives régionales et nationales",
-    "Membres des structures de formation et de recherche",
-    "Membres des systèmes de garantie de la qualité",
-]
 
-# Titre principal
-st.title("Tableau - Résultats par Indicateur et Catégorie d'acteurs")
+def plot_line_chart(df, x_col, y_cols, title):
+    fig, ax = plt.subplots()
+    for y in y_cols:
+        ax.plot(df[x_col], df[y], marker='o', label=y)
+    ax.set_title(title)
+    ax.set_xlabel(x_col)
+    ax.legend()
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    return fig
 
-# Affichage du tableau selon la structure demandée
-for idx, ind in enumerate(indicateurs):
-    st.markdown(f"### {ind['nom']}")
-    # Construction du DataFrame pour l'indicateur courant
-    data = {
-        "N°": [i + 1 for i in range(7)],
-        "Catégories d'acteurs": categories,
-        "Score moyen": ind["scores"],
-    }
-    df = pd.DataFrame(data)
 
-    # Afficher le score global de la dimension à droite du premier bloc
-    if ind["score_global"] is not None:
-        cols = st.columns([3, 1])
-        with cols[0]:
-            st.dataframe(df, use_container_width=True, hide_index=True)
-        with cols[1]:
-            st.markdown("#### Score moyen global")
-            st.metric(label="", value=round(ind["score_global"], 2))
-    else:
-        st.dataframe(df, use_container_width=True, hide_index=True)
+def plot_heatmap(df, title):
+    fig, ax = plt.subplots()
+    cax = ax.imshow(df.values, aspect='auto', cmap='viridis')
+    ax.set_xticks(range(len(df.columns)))
+    ax.set_xticklabels(df.columns, rotation=90)
+    ax.set_yticks(range(len(df.index)))
+    ax.set_yticklabels(df.index)
+    ax.set_title(title)
+    fig.colorbar(cax)
+    plt.tight_layout()
+    return fig
 
-    st.markdown("---")
+# --- Interface Streamlit ---
+st.set_page_config(page_title="Visualisation AGROECO", layout="wide")
+st.title("Visualisation Synthétique des Indicateurs AGROECO")
 
-st.info("Structure et disposition du tableau strictement conforme au modèle de la feuille 'Tous les résultats'.")
+uploaded_file = st.file_uploader("Téléversez le fichier Excel AGROECO", type=["xlsx"])
+if uploaded_file:
+    try:
+        in_memory = io.BytesIO(uploaded_file.read())
+        # Extraction des données de résumé
+        df_summary = pd.read_excel(in_memory, sheet_name='Résumé des résultats', header=None)
+        # Bar chart : indices des principales dimensions
+        dims = ['Environnementale', 'Economique', 'Politique et sociale', 'Territoriale', 'Temporelle']
+        dim_data = []
+        for idx, row in df_summary.iterrows():
+            if isinstance(row[0], str) and row[0] in dims and pd.notnull(row[1]):
+                dim_data.append({'Dimension': row[0], 'Score moyen': float(row[1])})
+        df_dim = pd.DataFrame(dim_data)
 
+        # Lecture des autres feuilles Excel via ExcelFile pour reuse
+        from pandas import ExcelFile
+        xls = ExcelFile(in_memory)
+
+        tabs = st.tabs([
+            "Barres - Dimensions",
+            "Heatmap - Collaboration",
+            "Courbes - Indices collaboration"
+        ])
+
+        # 1) Bar chart principales dimensions
+        with tabs[0]:
+            st.header("Indices des Principales Dimensions")
+            if not df_dim.empty:
+                fig = plot_bar_chart(df_dim, 'Dimension', 'Score moyen', 'Indices des Dimensions')
+                st.pyplot(fig)
+            else:
+                st.warning("Impossible d'extraire les indices des dimensions.")
+
+        # 2) Heatmap de la matrice de collaboration
+        with tabs[1]:
+            st.header("Matrice des Indices de Collaboration")
+            df_coll_matrix = pd.read_excel(in_memory, sheet_name='Résumé des résultats', header=1, index_col=0)
+            # Extraire zone carrée (nombre de catégories d'acteurs)
+            n = min(df_coll_matrix.shape)
+            mat = df_coll_matrix.iloc[:n, :n]
+            # Convertir en float (virgule décimale)
+            mat = mat.applymap(lambda x: float(str(x).replace(',', '.')) if pd.notnull(x) else np.nan)
+            fig = plot_heatmap(mat, 'Collaboration entre Acteurs')
+            st.pyplot(fig)
+
+        # 3) Line charts pour les indices de collaboration détaillés
+        with tabs[2]:
+            st.header("Indices de Collaboration Détaillés")
+            if '6. Indices de collaboration' in xls.sheet_names:
+                df_coll = pd.read_excel(in_memory, sheet_name='6. Indices de collaboration')
+                if 'Acteur source' in df_coll.columns and 'Score moyen' in df_coll.columns:
+                    # Conversion Score moyen
+                    df_coll['Score moyen'] = pd.to_numeric(
+                        df_coll['Score moyen'].astype(str).str.replace(',', '.', regex=False), errors='coerce'
+                    )
+                    df_pivot = df_coll.pivot(
+                        index='Acteur source', columns='Acteur cible', values='Score moyen'
+                    )
+                    df_plot = df_pivot.reset_index()
+                    fig = plot_line_chart(
+                        df_plot, 'Acteur source', list(df_pivot.columns),
+                        'Indices de Collaboration par Acteur'
+                    )
+                    st.pyplot(fig)
+                else:
+                    st.warning("Structure inattendue de la feuille '6. Indices de collaboration'.")
+            else:
+                st.warning("Feuille '6. Indices de collaboration' introuvable.")
+
+    except Exception as e:
+        st.error(f"Erreur lors du traitement du fichier : {e}")
+else:
+    st.info("Veuillez téléverser un fichier Excel pour commencer.")
