@@ -3,6 +3,11 @@ from page_resultats import show_page_resultats
 from page_resume import show_page_resume
 from page_graphiques import show_page_graphiques
 
+st.markdown(
+        "<h1 class='osae-main-title'>Outil Statistique Agro-Economie (OSAE)</h1>",
+        unsafe_allow_html=True,
+    )
+
 st.set_page_config(page_title="Outil Statistique Agro-Economie (OSAE)", layout="wide")
 
 # Onglets principaux

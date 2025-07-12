@@ -199,10 +199,7 @@ def show_page_resultats():
         "Membres des systèmes de garantie de la qualité",
     ]
 
-    st.markdown(
-        "<h1 class='osae-main-title'>Outil Statistique Agro-Economie (OSAE)</h1>",
-        unsafe_allow_html=True,
-    )
+    
 
     score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
