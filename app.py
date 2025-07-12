@@ -74,6 +74,21 @@ div[role="button"]:hover > span {
     text-decoration: underline !important;
     cursor: pointer !important;
 }
+/* Style du titre de l'accordéon par défaut */
+div[role="button"][aria-expanded] > span {
+    color: #011F26 !important;
+    font-size: 1.28em !important;
+    font-weight: 700 !important;
+    transition: color 0.18s;
+}
+/* Style au survol */
+div[role="button"]:hover > span {
+    color: #027368 !important;          /* ou #5C7373 selon préférence */
+    font-weight: 800 !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+}
+
 
 [data-testid="stExpander"] {
     background: #F4F7F6 !important;
