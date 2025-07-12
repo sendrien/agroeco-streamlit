@@ -138,7 +138,7 @@ h2 {
     transition: color 0.4s;
 }
 .stTabs [data-baseweb="tab-list"] {
-    border-bottom: 2.5px solid #027368 !important;
+    border-bottom: 50.5px solid #027368 !important;
 }
 .stTabs [data-baseweb="tab"] {
     color: #5C7373 !important;
@@ -147,9 +147,9 @@ h2 {
     transition: color 0.4s;
 }
 .stTabs [aria-selected="true"] {
-    color: white !important;
-    border-bottom: 12px solid #027368 !important;
-    background: #027368 !important;
+    color: #011F26 !important;
+    border-bottom: 3px solid #027368 !important;
+    background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
 }
 
