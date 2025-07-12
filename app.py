@@ -116,16 +116,13 @@ with tab1:
         }
         div[data-testid="stDataFrame"] th:nth-child(3),
         div[data-testid="stDataFrame"] td:nth-child(3) {
-            min-width: 120px !important;
-            max-width: 260px !important;
-            width: 210px !important;
+            min-width: 85px !important;
+            max-width: 110px !important;
+            width: 92px !important;
             text-align: center !important;
         }
         </style>
     """, unsafe_allow_html=True)
-
-    # Nouveau nom pour la colonne de scores
-    score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
     for i, dimension in enumerate(dimensions):
         all_scores = []
@@ -153,7 +150,7 @@ with tab1:
                 data = {
                     "N°": [i + 1 for i in range(7)],
                     "Catégories d'acteurs": categories,
-                    score_colname: [
+                    "Score moyen": [
                         "--" if v is None else v for v in ind["scores"]
                     ],
                 }
@@ -164,7 +161,7 @@ with tab1:
 
     st.markdown(
         "<span style='color:gray;font-size:1em'>"
-        "<b>Note&nbsp;:</b> Le score moyen global par dimension est la moyenne simple de tous les scores affichés dans la colonne « Scores moyens Indicateurs non pondérés par les poids des acteurs » des indicateurs de cette dimension, sans pondération selon la représentativité des groupes d'acteurs.</span>",
+        "<b>Note&nbsp;:</b> Le score moyen global par dimension est la moyenne simple de tous les scores affichés dans la colonne « Score moyen » des indicateurs de cette dimension, sans pondération selon la représentativité des groupes d'acteurs.</span>",
         unsafe_allow_html=True,
     )
 
