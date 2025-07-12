@@ -18,21 +18,16 @@ categories = [
     "Membres des systèmes de garantie de la qualité",
 ]
 
-# Titre principal
 st.title("Tableau - Résultats par Indicateur et Catégorie d'acteurs")
 
-# Affichage du tableau selon la structure demandée
 for idx, ind in enumerate(indicateurs):
     st.markdown(f"### {ind['nom']}")
-    # Construction du DataFrame pour l'indicateur courant
     data = {
         "N°": [i + 1 for i in range(7)],
         "Catégories d'acteurs": categories,
         "Score moyen": ind["scores"],
     }
     df = pd.DataFrame(data)
-
-    # Afficher le score global de la dimension à droite du premier bloc
     if ind["score_global"] is not None:
         cols = st.columns([3, 1])
         with cols[0]:
@@ -42,8 +37,4 @@ for idx, ind in enumerate(indicateurs):
             st.metric(label="", value=round(ind["score_global"], 2))
     else:
         st.dataframe(df, use_container_width=True, hide_index=True)
-
     st.markdown("---")
-
-st.info("Structure et disposition du tableau strictement conforme au modèle de la feuille 'Tous les résultats'.")
-
