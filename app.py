@@ -81,7 +81,7 @@ div[role="button"][aria-expanded] > span {
     align-items: center;
     margin-bottom: 1.2em;
     margin-top: 0.4em;
-    max-width: 355px;
+    max-width: 200px;
     border: 1.2px solid #034001;
     transition: box-shadow 0.5s, background 0.5s;
 }
