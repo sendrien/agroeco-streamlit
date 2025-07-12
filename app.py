@@ -4,14 +4,14 @@ import pandas as pd
 # Configuration de la page
 st.set_page_config(page_title="Tous les résultats", layout="wide")
 
-# Styles CSS pour reproduire le look Excel
+# CSS pour le style Excel-like
 st.markdown("""
 <style>
-table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
-td, th { border: 1px solid #ffffff; padding: 4px; }
-.header-blue { background-color: #4F81BD; color: white; font-weight: bold; }
-.header-green { background-color: #C6EFCE; color: black; font-weight: bold; }
-.cell-center { text-align: center; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+  td, th { border: 1px solid #ffffff; padding: 4px; }
+  .header-blue { background-color: #4F81BD; color: white; font-weight: bold; }
+  .header-green { background-color: #C6EFCE; color: black; font-weight: bold; }
+  .cell-center { text-align: center; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -35,39 +35,16 @@ data = {
         {"N°": 6, "Catégories d’acteurs": "Formation et recherches", "Score": 3.0},
         {"N°": 7, "Catégories d’acteurs": "Acteurs garantie qualité", "Score": 3.0},
     ],
+    # Ajoutez d'autres indicateurs ici...
 }
 
-# Table de titre global (en-têtes fusionnés)
-header = """
-<table>
-  <tr>
-    <td colspan="2" class="header-blue">Dimensions de l'outil AGROECO</td>
-    <td colspan="2" class="header-blue cell-center">Indicateurs</td>
-    <td colspan="2" class="header-green cell-center">Scores moyens indicateurs non pondérés par les poids des acteurs</td>
-    <td colspan="2" class="header-green cell-center">Score moyen global par dimension non pondérée par les poids des acteurs</td>
-  </tr>
-</table>
-"""
-st.markdown(header, unsafe_allow_html=True)
-
-# Boucle d'affichage de chaque indicateur
+# Pour chaque indicateur, reproduire le bloc Excel
 for indicateur, rows in data.items():
-    # Bar de titre pour l'indicateur
-    st.markdown(f"""
-<table>
-  <tr>
-    <td colspan="2" class="header-blue"></td>
-    <td colspan="4" class="header-blue cell-center">{indicateur}</td>
-  </tr>
-  <tr>
-    <th class="header-green cell-center">N°</th>
-    <th class="header-green cell-center">Catégories d’acteurs</th>
-    <th class="header-green"></th>
-    <th class="header-green cell-center">Score moyen non pondéré</th>
-  </tr>
-""", unsafe_allow_html=True)
+    # Calcul de la moyenne des scores non nuls
+    scores = [r['Score'] for r in rows if r['Score'] != 0]
+    avg = sum(scores) / len(scores) if scores else 0
 
-    # Lignes de données
+    # Construction des lignes de données
     rows_html = ''
     for r in rows:
         # Choix de l'icône selon le score
@@ -79,18 +56,36 @@ for indicateur, rows in data.items():
             icon = '🔴'
         rows_html += f"""
   <tr>
-    <td class="cell-center">{r['N°']}</td>
+    <td class=\"cell-center\">{r['N°']}</td>
     <td>{r['Catégories d’acteurs']}</td>
-    <td class="cell-center">{icon}</td>
-    <td class="cell-center">{r['Score']:.1f}</td>
+    <td class=\"cell-center\">{icon}</td>
+    <td class=\"cell-center\">{r['Score']:.1f}</td>
   </tr>
 """
 
-    # Clôture du tableau
-    st.markdown(rows_html + '</table>', unsafe_allow_html=True)
+    # Assemblage du bloc complet
+    html = f"""
+<table>
+  <tr>
+    <td colspan=\"3\" class=\"header-blue\"></td>
+    <td class=\"header-green cell-center\">{avg:.2f}</td>
+  </tr>
+  <tr>
+    <td colspan=\"3\" class=\"header-blue cell-center\">{indicateur}</td>
+    <td class=\"header-green\"></td>
+  </tr>
+  <tr>
+    <th class=\"header-green cell-center\">N°</th>
+    <th class=\"header-green\">Catégories d’acteurs</th>
+    <th class=\"header-green\"></th>
+    <th class=\"header-green cell-center\">Score moyen global</th>
+  </tr>
+{rows_html}</table>
+"""
 
-    # Séparateur
+    # Affichage du bloc
+    st.markdown(html, unsafe_allow_html=True)
     st.markdown('---')
 
-# Instruction pour exécution
-st.markdown("*Cette mise en page reproduit la structure de l'onglet Excel.*")
+# Note pour l'utilisateur
+st.markdown("*Cette mise en page suit exactement la structure des blocs de l'onglet 'Tous les résultats'.* ")
