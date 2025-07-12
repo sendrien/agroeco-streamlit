@@ -61,3 +61,7 @@ effectifs = [
     [40, 39, 40, 40, 40],         # Membres formation/recherche
     [19, 20, 20, 20, 20],         # Membres garantie qualité
 ]
+
+
+# Exemple de poids relatifs (total = 100)
+poids_relatif = [17, 13, 16, 13, 14, 14, 13]  # % (à adapter selon tes données réelles)
