@@ -6,6 +6,21 @@ st.set_page_config(
     layout="wide"
 )
 
+# CSS GLOBAL pour justifier tout le texte dans les tableaux (dataframe)
+st.markdown("""
+<style>
+[data-testid="stDataFrame"] .css-1v0mbdj,
+[data-testid="stDataFrame"] .css-1v0mbdj span,
+[data-testid="stDataFrame"] .css-1r6slb0,
+[data-testid="stDataFrame"] .css-1r6slb0 span {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    white-space: pre-line !important;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+</style>
+""", unsafe_allow_html=True)
+
 dimensions = [
     {
         "nom": "Dimension environnementale",
@@ -52,10 +67,9 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # CSS justifié sur toutes les colonnes
+    # Style additionnel pour le reste de la page (optionnel)
     st.markdown("""
         <style>
-        /* ACCORDION TITLE */
         div[role="button"][aria-expanded] > span {
             font-size: 1.55em !important;
             font-weight: 900 !important;
@@ -63,7 +77,6 @@ with tab1:
             letter-spacing: 0.01em;
             font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
         }
-        /* Score global block */
         .score-global-acc {
             background: #F3FAFD;
             border-radius: 16px;
@@ -102,26 +115,6 @@ with tab1:
             height: 2px;
             background: linear-gradient(90deg, #007C91 18%, #fff 95%);
             margin: 1.2em 0 0.7em 0;
-        }
-        /* Toutes les colonnes : justifiées */
-        div[data-testid="stDataFrame"] th,
-        div[data-testid="stDataFrame"] td {
-            text-align: justify !important;
-            text-justify: inter-word !important;
-            white-space: pre-line !important;
-        }
-        /* Largeurs colonnes */
-        div[data-testid="stDataFrame"] th:nth-child(1),
-        div[data-testid="stDataFrame"] td:nth-child(1) {
-            min-width: 18px !important;
-            max-width: 28px !important;
-            width: 21px !important;
-        }
-        div[data-testid="stDataFrame"] th:nth-child(3),
-        div[data-testid="stDataFrame"] td:nth-child(3) {
-            min-width: 120px !important;
-            max-width: 260px !important;
-            width: 210px !important;
         }
         </style>
     """, unsafe_allow_html=True)
