@@ -29,7 +29,7 @@ def get_dimension_scores_per_categorie(dimensions, categories):
     return df
 
 def show_page_resume():
-    st.markdown("<h2 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
 
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
 
