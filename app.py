@@ -45,11 +45,11 @@ html, body, .stApp {
     background: transparent;
     transition: box-shadow 0.5s;
 }
-hr {
-    //border: 1.8px solid #027368 !important;
+/*hr {
+    border: 1.8px solid #027368 !important;
     opacity: 0.7;
     transition: border 0.5s;
-}
+}*/
 
 /* Accordéons & titres palette + animation */
 div[role="button"][aria-expanded] > span {
