@@ -39,7 +39,7 @@ html, body, .stApp {
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 120px !important;
     box-shadow: 0 2px 18px #5C737322;
     margin-bottom: 1.1em;
     background: transparent;
@@ -112,7 +112,7 @@ div[role="button"][aria-expanded] > span {
 .ind-separator-acc {
     border: none;
     height: 3px;
-    //background: #027368;
+    background: #027368;
     margin: 1.15em 0 0.7em 0;
     border-radius: 8px;
     opacity: 0.8;
