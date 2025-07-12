@@ -109,9 +109,9 @@ with tab1:
         }
         div[data-testid="stDataFrame"] th:nth-child(1),
         div[data-testid="stDataFrame"] td:nth-child(1) {
-            min-width: 38px !important;
-            max-width: 45px !important;
-            width: 40px !important;
+            min-width: 21px !important;
+            max-width: 28px !important;
+            width: 24px !important;
             text-align: center !important;
         }
         div[data-testid="stDataFrame"] th:nth-child(3),
@@ -124,7 +124,6 @@ with tab1:
         </style>
     """, unsafe_allow_html=True)
 
-    # Nouveau nom pour la colonne de scores
     score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
     for i, dimension in enumerate(dimensions):
