@@ -52,9 +52,17 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Style pour le score global et les séparateurs modernes
+    # Style pour le score global, séparateurs, et titres des accordions
     st.markdown("""
         <style>
+        /* Accordion Title */
+        div[role="button"][aria-expanded] > span {
+            font-size: 1.35em !important;
+            font-weight: bold !important;
+            color: #007C91 !important;
+            letter-spacing: 0.01em;
+        }
+        /* Score global block */
         .score-global-acc {
             background: #F3FAFD;
             border-radius: 16px;
@@ -97,13 +105,13 @@ with tab1:
         </style>
     """, unsafe_allow_html=True)
 
-    for dimension in dimensions:
+    for i, dimension in enumerate(dimensions):
         all_scores = []
         for ind in dimension["indicateurs"]:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
 
-        with st.expander(f"{dimension['nom']}", expanded=True):
+        with st.expander(f"{dimension['nom']}", expanded=(i == 0)):
             st.markdown(
                 f"""
                 <div class="score-global-acc">
