@@ -45,11 +45,11 @@ html, body, .stApp {
     background: transparent;
     transition: box-shadow 0.5s;
 }
-/*hr {
+hr {
     border: 1.8px solid #027368 !important;
     opacity: 0.7;
     transition: border 0.5s;
-}*/
+}
 
 /* Accordéons & titres palette + animation */
 div[role="button"][aria-expanded] > span {
@@ -62,7 +62,7 @@ div[role="button"][aria-expanded] > span {
 }
 [data-testid="stExpander"] {
     background: #F4F7F6 !important;
-    border-radius: 13px !important;
+    border-radius: 2px !important;
     margin-bottom: 14px !important;
     box-shadow: 0 2px 16px #02736815;
     transition: background 0.5s, box-shadow 0.5s;
@@ -229,7 +229,7 @@ st.markdown(
     "<h1 class='osae-main-title'>Outil Statistique Agro-Economie (OSAE)</h1>",
     unsafe_allow_html=True,
 )
-st.markdown("<hr>", unsafe_allow_html=True)
+#st.markdown("<hr>", unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 Résumé", "📊 Graphiques"])
 
