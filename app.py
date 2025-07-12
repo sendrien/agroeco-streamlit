@@ -67,7 +67,6 @@ div[role="button"][aria-expanded] > span {
     box-shadow: 0 2px 16px #02736815;
     transition: background 0.5s, box-shadow 0.5s;
 }
-// Le corps de l'accordion
 [data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
     background: red !important;
     border-radius: 4px !important;
