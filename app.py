@@ -19,7 +19,6 @@ html, body, .stApp {
     font-size: 1.08em;
     padding: 9px 16px !important;
     color: #032612;
-    //background: red !important;
     transition: background 0.5s;
 }
 .justify-table th {
@@ -28,10 +27,9 @@ html, body, .stApp {
     font-size: 0.8em;
 }
 .justify-table tr:nth-child(even) td {
-    //background: #F4F7F6 !important;
 }
 .justify-table tr:hover td {
-    background: #d7ece9 !important;  /* Doux, subtil */
+    background: #d7ece9 !important;
     color: #032612 !important;
     transition: background 0.22s;
 }
@@ -52,44 +50,22 @@ hr {
 }
 
 /* Accordéons & titres palette + animation */
-div[role="button"][aria-expanded] > span {
-    font-size: 1.32em !important;
-    font-weight: 900 !important;
-    color: #011F26 !important;
-    letter-spacing: 0.01em;
-    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    transition: color 0.4s;
-}
-/* Style du titre de l'accordéon par défaut */
-div[role="button"][aria-expanded] > span {
+/* Nouveau sélecteur Streamlit expander titre */
+[data-testid="stExpander"] > div > div {
     color: #011F26 !important;
     font-size: 1.28em !important;
     font-weight: 700 !important;
-    transition: color 0.18s;
-}
-/* Style au survol */
-div[role="button"]:hover > span {
-    color: #027368 !important;          /* ou #5C7373 selon préférence */
-    font-weight: 800 !important;
-    text-decoration: underline !important;
+    transition: color 0.18s, text-decoration 0.18s;
     cursor: pointer !important;
 }
-/* Style du titre de l'accordéon par défaut */
-div[role="button"][aria-expanded] > span {
-    color: #011F26 !important;
-    font-size: 1.28em !important;
-    font-weight: 700 !important;
-    transition: color 0.18s;
-}
-/* Style au survol */
-div[role="button"]:hover > span {
-    color: #027368 !important;          /* ou #5C7373 selon préférence */
+[data-testid="stExpander"]:hover > div > div {
+    color: #027368 !important;
     font-weight: 800 !important;
     text-decoration: underline !important;
     cursor: pointer !important;
 }
 
-
+/* Expander container */
 [data-testid="stExpander"] {
     background: #F4F7F6 !important;
     border-radius: 13px !important;
@@ -149,7 +125,6 @@ div[role="button"]:hover > span {
     transition: background 0.5s;
 }
 
-/* Titres principaux et secondaires */
 h1, .osae-main-title {
     color: #011F26 !important;
     font-size: 2.3rem !important;
@@ -179,11 +154,8 @@ h2 {
 /*.stTabs [aria-selected="true"] {
     color: #011F26 !important;
     border-bottom: 4px solid #011F26 !important;
-    //background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
 }*/
-
-/* Footer large et moderne */
 .footer {
     position: fixed;
     left: 0;
