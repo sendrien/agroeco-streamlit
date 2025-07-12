@@ -52,7 +52,7 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # CSS personnalisé pour accordions + tableaux
+    # CSS personnalisé pour accordions + tableaux : justifié sur toutes les colonnes
     st.markdown("""
         <style>
         /* ACCORDION TITLE */
@@ -107,25 +107,25 @@ with tab1:
         div[data-testid="stDataFrame"] table {
             width: 100%;
         }
-        div[data-testid="stDataFrame"] th:nth-child(1),
-        div[data-testid="stDataFrame"] td:nth-child(1) {
-            min-width: 21px !important;
-            max-width: 28px !important;
-            width: 24px !important;
-            text-align: center !important;
-        }
-        /* Catégories d'acteurs : texte justifié (gauche/droite) */
-        div[data-testid="stDataFrame"] th:nth-child(2),
-        div[data-testid="stDataFrame"] td:nth-child(2) {
+        /* Justification sur TOUTES les colonnes */
+        div[data-testid="stDataFrame"] th,
+        div[data-testid="stDataFrame"] td {
             text-align: justify !important;
             text-justify: inter-word !important;
+            white-space: pre-line !important;
+        }
+        /* Largeurs */
+        div[data-testid="stDataFrame"] th:nth-child(1),
+        div[data-testid="stDataFrame"] td:nth-child(1) {
+            min-width: 18px !important;
+            max-width: 28px !important;
+            width: 21px !important;
         }
         div[data-testid="stDataFrame"] th:nth-child(3),
         div[data-testid="stDataFrame"] td:nth-child(3) {
             min-width: 120px !important;
             max-width: 260px !important;
             width: 210px !important;
-            text-align: center !important;
         }
         </style>
     """, unsafe_allow_html=True)
