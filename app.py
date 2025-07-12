@@ -19,7 +19,7 @@ html, body, .stApp {
     font-size: 1.08em;
     padding: 9px 16px !important;
     color: #032612;
-    //background: red !important;
+    background: red !important;
     transition: background 0.5s;
 }
 .justify-table th {
@@ -39,7 +39,7 @@ html, body, .stApp {
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    border-radius: 120px !important;
+    border-radius: 12px !important;
     box-shadow: 0 2px 18px #5C737322;
     margin-bottom: 1.1em;
     background: transparent;
