@@ -60,12 +60,19 @@ div[role="button"][aria-expanded] > span {
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     transition: color 0.4s;
 }
-div[role="button"]:hover > span {
-    color: #027368 !important;      /* Vert de ta palette */
+/* Style du titre de l'accordéon par défaut */
+div[role="button"][aria-expanded] > span {
+    color: #011F26 !important;
+    font-size: 1.28em !important;
     font-weight: 700 !important;
-    text-decoration: underline !important; /* Ou autre style selon goût */
+    transition: color 0.18s;
+}
+/* Style au survol */
+div[role="button"]:hover > span {
+    color: #027368 !important;          /* ou #5C7373 selon préférence */
+    font-weight: 800 !important;
+    text-decoration: underline !important;
     cursor: pointer !important;
-    transition: color 0.18s, text-decoration 0.18s;
 }
 
 [data-testid="stExpander"] {
