@@ -52,7 +52,7 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # CSS personnalisé pour accordions + tableaux : justifié sur toutes les colonnes
+    # CSS justifié sur toutes les colonnes
     st.markdown("""
         <style>
         /* ACCORDION TITLE */
@@ -103,18 +103,14 @@ with tab1:
             background: linear-gradient(90deg, #007C91 18%, #fff 95%);
             margin: 1.2em 0 0.7em 0;
         }
-        /* Style custom pour les colonnes des DataFrames */
-        div[data-testid="stDataFrame"] table {
-            width: 100%;
-        }
-        /* Justification sur TOUTES les colonnes */
+        /* Toutes les colonnes : justifiées */
         div[data-testid="stDataFrame"] th,
         div[data-testid="stDataFrame"] td {
             text-align: justify !important;
             text-justify: inter-word !important;
             white-space: pre-line !important;
         }
-        /* Largeurs */
+        /* Largeurs colonnes */
         div[data-testid="stDataFrame"] th:nth-child(1),
         div[data-testid="stDataFrame"] td:nth-child(1) {
             min-width: 18px !important;
