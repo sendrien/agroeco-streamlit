@@ -39,14 +39,14 @@ html, body, .stApp {
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    border-radius: 4px !important;
+    border-radius: 12px !important;
     box-shadow: 0 2px 18px #5C737322;
     margin-bottom: 1.1em;
     background: transparent;
     transition: box-shadow 0.5s;
 }
 hr {
-    border: 1.8px solid #027368 !important;
+    //border: 1.8px solid #027368 !important;
     opacity: 0.7;
     transition: border 0.5s;
 }
