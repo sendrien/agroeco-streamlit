@@ -103,7 +103,7 @@ div[role="button"][aria-expanded] > span {
 }
 .indicator-title-acc {
     font-size: 1.13em;
-    color: #027368;
+    color: blued;
     font-weight: 700;
     margin-top: 1.2em;
     margin-bottom: 0.35em;
