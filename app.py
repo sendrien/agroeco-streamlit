@@ -8,12 +8,9 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-/* Body blanc, tout le reste palette OSAE */
 html, body, .stApp {
     background: #fff !important;
 }
-
-/* Tableaux avec couleurs de ta palette */
 .justify-table th, .justify-table td {
     text-align: justify !important;
     text-justify: inter-word !important;
@@ -34,9 +31,9 @@ html, body, .stApp {
     background: #F4F7F6 !important;
 }
 .justify-table tr:hover td {
-    background: #5C7373 !important;
-    color: #fff;
-    transition: background 0.4s;
+    background: #d7ece9 !important;  /* Doux, subtil */
+    color: #032612 !important;
+    transition: background 0.22s;
 }
 .justify-table {
     width: 100% !important;
