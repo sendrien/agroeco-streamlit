@@ -146,12 +146,12 @@ h2 {
     font-size: 1.09em;
     transition: color 0.4s;
 }
-.stTabs [aria-selected="true"] {
+/*.stTabs [aria-selected="true"] {
     color: #011F26 !important;
     border-bottom: 4px solid #011F26 !important;
     //background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
-}
+}*/
 
 /* Footer large et moderne */
 .footer {
