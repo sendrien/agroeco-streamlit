@@ -28,7 +28,7 @@ html, body, .stApp {
     font-size: 0.8em;
 }
 .justify-table tr:nth-child(even) td {
-    background: yellow !important;
+    //background: #F4F7F6 !important;
 }
 .justify-table tr:hover td {
     background: #d7ece9 !important;  /* Doux, subtil */
@@ -39,7 +39,7 @@ html, body, .stApp {
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 4px !important;
     box-shadow: 0 2px 18px #5C737322;
     margin-bottom: 1.1em;
     background: transparent;
