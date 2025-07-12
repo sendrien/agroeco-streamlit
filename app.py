@@ -7,6 +7,7 @@ et indices de collaboration.
 import io
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 # --- Fonctions de tracés ---
@@ -52,11 +53,9 @@ st.title("Visualisation Synthétique des Indicateurs AGROECO")
 uploaded_file = st.file_uploader("Téléversez le fichier Excel AGROECO", type=["xlsx"])
 if uploaded_file:
     try:
-        # Lecture du fichier Excel
         in_memory = io.BytesIO(uploaded_file.read())
         xls = pd.ExcelFile(in_memory)
 
-        # Onglets pour chaque type de graphique
         tabs = st.tabs([
             "Barres - Indicateurs",
             "Heatmap - Collaboration",
@@ -67,7 +66,7 @@ if uploaded_file:
         with tabs[0]:
             st.header("Indicateurs par Dimension")
             indicator_sheets = {
-                '1. Indicateurs environnementaux': 'Environnementnels',
+                '1. Indicateurs environnementaux': 'Environnementaux',
                 '2. Indicateurs économiques': 'Économiques',
                 '3. Indicateurs politico-sociaux': 'Politico-sociaux',
                 '4. Indicateurs territoriaux': 'Territoriaux',
@@ -78,6 +77,13 @@ if uploaded_file:
                     df = xls.parse(sheet_name)
                     if 'Indicateur' in df.columns and 'Score moyen' in df.columns:
                         df_clean = df[['Indicateur', 'Score moyen']].dropna()
+                        # Conversion en float (gère virgule comme séparateur décimal)
+                        df_clean['Score moyen'] = pd.to_numeric(
+                            df_clean['Score moyen'].astype(str)
+                                       .str.replace(',', '.', regex=False),
+                            errors='coerce'
+                        )
+                        df_clean = df_clean.dropna(subset=['Score moyen'])
                         fig = plot_bar_chart(df_clean, 'Indicateur', 'Score moyen', f'Indicateurs {label}')
                         st.pyplot(fig)
 
@@ -86,8 +92,13 @@ if uploaded_file:
             st.header("Matrice des Indices de Collaboration")
             if 'Résumé des résultats' in xls.sheet_names:
                 df_summary = xls.parse('Résumé des résultats', index_col=0)
+                # Extraire zone carrée
                 n = min(df_summary.shape)
                 collab_matrix = df_summary.iloc[:n, :n]
+                # Conversion en float
+                collab_matrix = collab_matrix.applymap(
+                    lambda x: float(str(x).replace(',', '.')) if pd.notnull(x) else np.nan
+                )
                 fig = plot_heatmap(collab_matrix, 'Collaboration entre Acteurs')
                 st.pyplot(fig)
 
@@ -97,10 +108,20 @@ if uploaded_file:
             if '6. Indices de collaboration' in xls.sheet_names:
                 df_coll = xls.parse('6. Indices de collaboration')
                 if 'Acteur source' in df_coll.columns and 'Score moyen' in df_coll.columns:
-                    df_pivot = df_coll.pivot(index='Acteur source', columns='Acteur cible', values='Score moyen')
+                    # Conversion Score moyen
+                    df_coll['Score moyen'] = pd.to_numeric(
+                        df_coll['Score moyen'].astype(str)
+                                  .str.replace(',', '.', regex=False),
+                        errors='coerce'
+                    )
+                    df_pivot = df_coll.pivot(
+                        index='Acteur source', columns='Acteur cible', values='Score moyen'
+                    )
                     df_plot = df_pivot.reset_index()
-                    fig = plot_line_chart(df_plot, 'Acteur source', list(df_pivot.columns),
-                                          'Indices de Collaboration par Acteur')
+                    fig = plot_line_chart(
+                        df_plot, 'Acteur source', list(df_pivot.columns),
+                        'Indices de Collaboration par Acteur'
+                    )
                     st.pyplot(fig)
 
     except Exception as e:
