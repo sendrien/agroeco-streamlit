@@ -199,7 +199,6 @@ def show_page_resultats():
         "Membres des systèmes de garantie de la qualité",
     ]
 
-    
 
     score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
@@ -244,8 +243,4 @@ def show_page_resultats():
         "<b>Note&nbsp;:</b> Le score moyen global par dimension est la moyenne simple de tous les scores affichés dans la colonne « Scores moyens Indicateurs non pondérés par les poids des acteurs » des indicateurs de cette dimension, sans pondération selon la représentativité des groupes d'acteurs.</span>",
         unsafe_allow_html=True,
     )
-    st.markdown("""
-        <div class="footer">
-            © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
-        </div>
-    """, unsafe_allow_html=True)
+

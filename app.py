@@ -21,3 +21,11 @@ with tab2:
 
 with tab3:
     show_page_graphiques()
+
+
+
+st.markdown("""
+    <div class="footer">
+        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
+    </div>
+""", unsafe_allow_html=True)
