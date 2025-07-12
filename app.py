@@ -114,6 +114,12 @@ with tab1:
             width: 24px !important;
             text-align: center !important;
         }
+        /* Catégories d'acteurs : texte justifié (gauche/droite) */
+        div[data-testid="stDataFrame"] th:nth-child(2),
+        div[data-testid="stDataFrame"] td:nth-child(2) {
+            text-align: justify !important;
+            text-justify: inter-word !important;
+        }
         div[data-testid="stDataFrame"] th:nth-child(3),
         div[data-testid="stDataFrame"] td:nth-child(3) {
             min-width: 120px !important;
