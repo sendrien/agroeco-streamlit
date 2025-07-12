@@ -41,54 +41,107 @@ categories = [
     "Membres des systèmes de garantie de la qualité",
 ]
 
-# --- TITRE PRINCIPAL ---
 st.markdown(
     "<h1 style='color:#007C91; font-size:2.7rem; margin-bottom:0.2em;'>Outil Statistique Agro-Economie (OSAE)</h1>",
     unsafe_allow_html=True,
 )
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# --- ONGLET ---
 tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 Résumé", "📊 Graphiques"])
 
 with tab1:
-    st.markdown(
-        "<h2 style='color:#007C91; font-size:2rem; margin-bottom:0.5em;'>Synthèse structurée des résultats par dimension</h2>",
-        unsafe_allow_html=True,
-    )
     st.markdown("<br>", unsafe_allow_html=True)
 
+    # --- Modern style for each dimension as a section/card
+    st.markdown("""
+        <style>
+        .dimension-card {
+            background: #F3FAFD;
+            border-radius: 22px;
+            box-shadow: 0 2px 16px #007c9122;
+            padding: 2.2em 2.3em 2em 2.3em;
+            margin-bottom: 2.8em;
+        }
+        .dim-title {
+            font-size: 1.5em;
+            color: #007C91;
+            font-weight: bold;
+            margin-bottom: 0.7em;
+        }
+        .score-global {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px #007c9140;
+            padding: 1em 1.5em 1em 1.5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5em;
+            margin-top: 0.4em;
+        }
+        .score-global-label {
+            color: #007C91;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+        }
+        .score-global-value {
+            font-size: 2.2em;
+            color: #222;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0.22em;
+            margin-bottom: 0.3em;
+        }
+        .indicator-title {
+            font-size: 1.08em;
+            color: #333;
+            font-weight: 600;
+            margin-top: 1.9em;
+            margin-bottom: 0.3em;
+        }
+        .ind-separator {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, #007C91 18%, #fff 95%);
+            margin: 1.7em 0 1em 0;
+        }
+        @media (max-width: 800px) {
+            .dimension-card { padding: 1em 0.4em 1em 0.4em; }
+            .score-global { padding: 0.9em 0.6em 0.9em 0.6em;}
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     for dimension in dimensions:
+        # Calcul score global de la dimension
         all_scores = []
         for ind in dimension["indicateurs"]:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
 
-        cols = st.columns([5, 1.7])
-        with cols[0]:
-            st.markdown(
-                f"<h3 style='color:#007C91;'>{dimension['nom']}</h3>",
-                unsafe_allow_html=True,
-            )
-        with cols[1]:
-            st.markdown(
-                f"""
-                <div style='background:#F3FAFD;border-radius:18px;padding:1.2em 0.5em 1.2em 0.5em;
-                box-shadow:0 3px 12px #007c9140;margin-bottom:18px;margin-top:10px;width:100%;'>
-                    <div style='color:#007C91;font-size:1em;font-weight:bold;text-align:center;'>
-                        Score moyen global<br>par dimension (non pondéré)
-                    </div>
-                    <div style='font-size:2em;color:#222;text-align:center;font-weight:bold;margin-top:3px;'>
-                        {score_global_dimension}
-                    </div>
+        # Section carte pour chaque dimension
+        st.markdown('<div class="dimension-card">', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="dim-title">{dimension["nom"]}</div>',
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            f"""
+            <div class="score-global">
+                <div class="score-global-label">
+                    Score moyen global<br>par dimension (non pondéré)
                 </div>
-                """, unsafe_allow_html=True
-            )
+                <div class="score-global-value">{score_global_dimension}</div>
+            </div>
+            """, unsafe_allow_html=True
+        )
 
-        for ind in dimension["indicateurs"]:
+        # Affichage des indicateurs avec titre + DataFrame + séparateur fin moderne
+        for idx, ind in enumerate(dimension["indicateurs"]):
             st.markdown(
-                f"<div style='font-size:1.1em;font-weight:bold;color:#333;margin-top:30px;'>"
-                f"&#x25B6;&nbsp;{ind['nom']}</div>", unsafe_allow_html=True
+                f'<div class="indicator-title">&#x25B6;&nbsp;{ind["nom"]}</div>',
+                unsafe_allow_html=True
             )
             data = {
                 "N°": [i + 1 for i in range(7)],
@@ -99,7 +152,10 @@ with tab1:
             }
             df = pd.DataFrame(data)
             st.dataframe(df, use_container_width=True, hide_index=True)
-        st.markdown("<hr>", unsafe_allow_html=True)
+            if idx < len(dimension["indicateurs"]) - 1:
+                st.markdown('<hr class="ind-separator">', unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)  # Close dimension card
 
     st.markdown(
         "<span style='color:gray;font-size:1em'>"
