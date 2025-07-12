@@ -201,3 +201,4 @@ st.markdown("""
         © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
     </div>
 """, unsafe_allow_html=True)
+
