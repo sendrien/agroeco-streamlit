@@ -33,7 +33,7 @@ st.markdown("""
         bottom: 0;
         width: 100vw;
         background: #E5EFE7;
-        color: #027368;
+        color: dark;
         text-align: center;
         padding: 10px 0 7px 0;
         font-size: 1rem;
@@ -51,8 +51,4 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-    <div class="footer">
-        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
-    </div>
-""", unsafe_allow_html=True)
+
