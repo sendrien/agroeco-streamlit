@@ -158,8 +158,8 @@ h2 {
     position: fixed;
     left: 0;
     bottom: 0;
-    width: 200vw;
-    min-height: 55px;
+    width: 100vw;
+    min-height: 100px;
     background: #027368;
     color: #fff;
     text-align: center;
