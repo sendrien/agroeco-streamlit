@@ -60,6 +60,14 @@ div[role="button"][aria-expanded] > span {
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     transition: color 0.4s;
 }
+div[role="button"]:hover > span {
+    color: #027368 !important;      /* Vert de ta palette */
+    font-weight: 700 !important;
+    text-decoration: underline !important; /* Ou autre style selon goût */
+    cursor: pointer !important;
+    transition: color 0.18s, text-decoration 0.18s;
+}
+
 [data-testid="stExpander"] {
     background: #F4F7F6 !important;
     border-radius: 13px !important;
