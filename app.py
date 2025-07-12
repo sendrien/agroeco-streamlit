@@ -6,7 +6,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# ----------- CSS GLOBAL : justification & améliorations -----------
 st.markdown("""
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
@@ -16,8 +15,8 @@ st.markdown("""
     text-justify: inter-word !important;
     white-space: pre-line !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    font-size: 1.06em;
-    padding: 7px 11px !important;
+    font-size: 1.08em;
+    padding: 7px 12px !important;
 }
 .justify-table th {
     background: #eaf4fb !important;
@@ -26,47 +25,47 @@ st.markdown("""
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    border-radius: 10px !important;
+    border-radius: 9px !important;
     box-shadow: 0 3px 14px #145da016;
     margin-bottom: 1em;
 }
 /* Accordion améliorés */
 [data-testid="stExpander"] > div > label, div[role="button"][aria-expanded] > span {
-    font-size: 1.25em !important;
-    font-weight: 800 !important;
-    color: #008A63 !important;
-    letter-spacing: 0.02em;
+    font-size: 1.28em !important;
+    font-weight: 900 !important;
+    color: #145DA0 !important;
+    letter-spacing: 0.01em;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    padding-left: 0.3em;
+    padding-left: 0.25em;
 }
 [data-testid="stExpander"] svg {
-    color: #008A63 !important;
+    color: #3BB274 !important;
 }
 /* Titres dimension */
 .dimension-title {
-    font-size: 2.15em;
+    font-size: 2.18em;
     color: #145DA0;
     font-weight: 900;
     letter-spacing: 0.01em;
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 0.07em;
+    margin-bottom: 0.1em;
 }
 .indicator-title-acc {
-    font-size: 1.18em;
-    color: #e47919;
+    font-size: 1.17em;
+    color: #3BB274;
     font-weight: 700;
     margin-top: 1.2em;
     margin-bottom: 0.5em;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 .score-global-acc {
-    background: linear-gradient(95deg, #ECF9F1 65%, #B8D7F5 100%);
-    border-radius: 14px;
-    box-shadow: 0 2px 13px #b1e7cb2f;
+    background: #F4FAF7;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #aee8cb30;
     padding: 1.1em 0.7em 0.8em 0.7em;
     display: flex;
     flex-direction: column;
@@ -74,28 +73,28 @@ st.markdown("""
     margin-bottom: 1.2em;
     margin-top: 0.4em;
     max-width: 360px;
-    border: 1.5px solid #b1e7cb4b;
+    border: 1.5px solid #b1e7cb48;
 }
 .score-global-label-acc {
-    color: #008A63;
-    font-size: 1.13em;
+    color: #3BB274;
+    font-size: 1.09em;
     font-weight: 600;
     text-align: center;
 }
 .score-global-value-acc {
-    font-size: 2.2em;
+    font-size: 2.1em;
     color: #222;
     font-weight: bold;
     text-align: center;
-    margin-top: 0.22em;
-    margin-bottom: 0.3em;
+    margin-top: 0.2em;
+    margin-bottom: 0.32em;
 }
 .ind-separator-acc {
     border: none;
     height: 2.5px;
-    background: linear-gradient(90deg, #145DA0 10%, #FFD200 65%, #fff 100%);
-    margin: 1.1em 0 0.7em 0;
-    border-radius: 8px;
+    background: #145DA0;
+    margin: 1.15em 0 0.7em 0;
+    border-radius: 6px;
 }
 span.material-icons {
     font-size: 1.18em !important;
@@ -116,8 +115,8 @@ def df_to_justified_html(df):
 dimensions = [
     {
         "nom": "Dimension environnementale",
-        "icon": "eco",      # Icône Material
-        "color": "#00AB71",
+        "icon": "eco",
+        "color": "#3BB274", # Vert
         "indicateurs": [
             {
                 "nom": "Indicateur 1",
@@ -134,7 +133,7 @@ dimensions = [
     {
         "nom": "Dimension économique",
         "icon": "paid",
-        "color": "#E47919",
+        "color": "#145DA0", # Bleu
         "indicateurs": [
             {
                 "nom": "Indicateur 3",
@@ -177,13 +176,14 @@ with tab1:
         for ind in dimension["indicateurs"]:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
-        # Couleur d’accompagnement
         color = dimension.get("color", "#145DA0")
         icon = dimension.get("icon", "apps")
 
-        with st.expander(f"<span class='material-icons'>{icon}</span> "
-                         f"<span style='color:{color};font-size:1.24em;font-weight:700;'>{dimension['nom']}</span>", 
-                         expanded=(i == 0)):
+        with st.expander(
+            f"<span class='material-icons'>{icon}</span> "
+            f"<span style='color:{color};font-size:1.23em;font-weight:700;'>{dimension['nom']}</span>", 
+            expanded=(i == 0)
+        ):
             st.markdown(
                 f"""
                 <div class="score-global-acc">
