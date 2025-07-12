@@ -19,11 +19,11 @@ html, body, .stApp {
     font-size: 1.08em;
     padding: 9px 16px !important;
     color: #032612;
-    background: blue !important;
+    //background: red !important;
     transition: background 0.5s;
 }
 .justify-table th {
-    background: #027368 !important;
+    background: yelow !important;
     color: #fff;
     font-size: 1.13em;
 }
