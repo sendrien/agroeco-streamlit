@@ -138,10 +138,10 @@ h2 {
     transition: color 0.4s;
 }
 .stTabs [data-baseweb="tab-list"] {
-    border-bottom: 20.5px solid #027368 !important;
+    border-bottom: 2.5px solid #027368 !important;
 }
 .stTabs [data-baseweb="tab"] {
-    color: #5C7373 !important;
+    color: blue !important;
     font-weight: 600;
     font-size: 1.09em;
     transition: color 0.4s;
