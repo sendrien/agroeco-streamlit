@@ -75,7 +75,7 @@ div[role="button"][aria-expanded] > span {
     background: #027368;
     border-radius: 4px;
     box-shadow: 0 2px 12px #02736822;
-    padding: 0.5em 1.1em 0.8em 1.1em;
+    padding: 0.2em 1.1em 0.2em 1.1em;
     display: flex;
     flex-direction: column;
     align-items: center;
