@@ -2,90 +2,107 @@ import streamlit as st
 import pandas as pd
 
 # Configuration de la page
-st.set_page_config(page_title="Tous les résultats", layout="wide")
+st.set_page_config(
+    page_title="Dashboard AGROECO",
+    page_icon="🌱",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# CSS pour le style Excel-like
-st.markdown("""
-<style>
-  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
-  td, th { border: 1px solid #ffffff; padding: 4px; }
-  .header-blue { background-color: #4F81BD; color: white; font-weight: bold; }
-  .header-green { background-color: #C6EFCE; color: black; font-weight: bold; }
-  .cell-center { text-align: center; }
-</style>
-""", unsafe_allow_html=True)
+# Styles CSS personnalisés
+st.markdown(
+    """
+    <style>
+    /* Titre principal */
+    h1 {
+        color: #2E8B57;
+        font-size: 2.5rem;
+    }
+    /* Sous-titres */
+    h2, h3 {
+        color: #556B2F;
+    }
+    /* Sidebar */
+    .css-1d391kg .css-1lcbmhc {
+        background-color: #F0FFF0;
+    }
+    /* Table style */
+    .stDataFrame div {
+        font-family: 'Arial', sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 
-# Données statiques d'exemple
-data = {
-    "Indicateur 1": [
-        {"N°": 1, "Catégories d’acteurs": "Petits exploitants agricoles familiaux", "Score": 1.4},
-        {"N°": 2, "Catégories d’acteurs": "Consommateurs", "Score": 1.7},
-        {"N°": 3, "Catégories d’acteurs": "Membres ONG", "Score": 2.7},
-        {"N°": 4, "Catégories d’acteurs": "Membres OSC", "Score": 2.5},
-        {"N°": 5, "Catégories d’acteurs": "Autorités administratives", "Score": 2.0},
-        {"N°": 6, "Catégories d’acteurs": "Formation et recherches", "Score": 2.5},
-        {"N°": 7, "Catégories d’acteurs": "Acteurs garantie qualité", "Score": 2.5},
-    ],
-    "Indicateur 2": [
-        {"N°": 1, "Catégories d’acteurs": "Petits exploitants agricoles familiaux", "Score": 2.0},
-        {"N°": 2, "Catégories d’acteurs": "Consommateurs", "Score": 1.6},
-        {"N°": 3, "Catégories d’acteurs": "Membres ONG", "Score": 3.2},
-        {"N°": 4, "Catégories d’acteurs": "Membres OSC", "Score": 3.5},
-        {"N°": 5, "Catégories d’acteurs": "Autorités administratives", "Score": 3.0},
-        {"N°": 6, "Catégories d’acteurs": "Formation et recherches", "Score": 3.0},
-        {"N°": 7, "Catégories d’acteurs": "Acteurs garantie qualité", "Score": 3.0},
-    ],
-    # Ajoutez d'autres indicateurs ici...
-}
+# Titre de l'application
+st.title("🌱 Dashboard AGROECO")
+st.markdown("**Visualisation interactive des scores par indicateur et par dimension**")
 
-# Pour chaque indicateur, reproduire le bloc Excel
-for indicateur, rows in data.items():
-    # Calcul de la moyenne des scores non nuls
-    scores = [r['Score'] for r in rows if r['Score'] != 0]
-    avg = sum(scores) / len(scores) if scores else 0
+# Chargement des données
+@st.cache_data
+def load_data(path: str):
+    df = pd.read_excel(path, sheet_name="Tous les résultats")
+    # Renommage clair des colonnes
+    df = df.rename(columns={
+        "Score moyen non pondéré": "Score indicateur (non pondéré)",
+        "Score moyen global par dimension": "Score dimension (non pondéré)"
+    })
+    return df
 
-    # Construction des lignes de données
-    rows_html = ''
-    for r in rows:
-        # Choix de l'icône selon le score
-        if r['Score'] >= 3.0:
-            icon = '🟢'
-        elif r['Score'] >= 2.0:
-            icon = '🟡'
-        else:
-            icon = '🔴'
-        rows_html += f"""
-  <tr>
-    <td class=\"cell-center\">{r['N°']}</td>
-    <td>{r['Catégories d’acteurs']}</td>
-    <td class=\"cell-center\">{icon}</td>
-    <td class=\"cell-center\">{r['Score']:.1f}</td>
-  </tr>
-"""
+df = load_data("AGROECO 07072025.xlsx")
 
-    # Assemblage du bloc complet
-    html = f"""
-<table>
-  <tr>
-    <td colspan=\"3\" class=\"header-blue\"></td>
-    <td class=\"header-green cell-center\">{avg:.2f}</td>
-  </tr>
-  <tr>
-    <td colspan=\"3\" class=\"header-blue cell-center\">{indicateur}</td>
-    <td class=\"header-green\"></td>
-  </tr>
-  <tr>
-    <th class=\"header-green cell-center\">N°</th>
-    <th class=\"header-green\">Catégories d’acteurs</th>
-    <th class=\"header-green\"></th>
-    <th class=\"header-green cell-center\">Score moyen global</th>
-  </tr>
-{rows_html}</table>
-"""
+# Préparation des pivots
+# Détails par indicateur
+df_ind = df.pivot_table(
+    index=["Dimension", "Indicateur"],
+    columns="Catégorie d’acteurs",
+    values="Score indicateur (non pondéré)"
+).reset_index()
 
-    # Affichage du bloc
-    st.markdown(html, unsafe_allow_html=True)
-    st.markdown('---')
+# Synthèse par dimension
+df_dim = df.drop_duplicates(["Dimension", "Catégorie d’acteurs"]) \
+    .pivot_table(
+        index="Dimension",
+        columns="Catégorie d’acteurs",
+        values="Score dimension (non pondéré)"
+    )
 
-# Note pour l'utilisateur
-st.markdown("*Cette mise en page suit exactement la structure des blocs de l'onglet 'Tous les résultats'.* ")
+# Sélecteur de vue
+view = st.sidebar.radio(
+    "Sélectionnez la vue", 
+    ["Détails par indicateur", "Synthèse par dimension"]
+)
+
+if view == "Détails par indicateur":
+    st.header("📊 Détails par indicateur")
+    # Filtre par dimension
+    dim_sel = st.sidebar.selectbox(
+        "Choisir une dimension", 
+        df_ind["Dimension"].unique()
+    )
+    df_display = df_ind[df_ind["Dimension"] == dim_sel].drop(columns="Dimension")
+    # Affichage avec coloration en dégradé
+    styled = df_display.style.background_gradient(
+        axis=1, 
+        cmap="RdYlGn"
+    ).set_precision(2)
+    st.dataframe(styled, use_container_width=True)
+
+else:
+    st.header("📈 Synthèse par dimension")
+    # Sélection des catégories
+    cat_sel = st.sidebar.multiselect(
+        "Choisir des catégories", 
+        df_dim.columns.tolist(), 
+        default=df_dim.columns.tolist()
+    )
+    # Affichage synthèse
+    styled_dim = df_dim[cat_sel].style.background_gradient(
+        axis=1, 
+        cmap="RdYlGn"
+    ).set_precision(2)
+    st.dataframe(styled_dim, use_container_width=True)
+
+# Pied de page
+st.markdown("---")
+st.markdown("*Développé par l'équipe AGROECO*  _Date de génération : 07/07/2025_")
