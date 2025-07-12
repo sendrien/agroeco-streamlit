@@ -50,7 +50,7 @@ def show_page_resume():
 
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
 
-    # Affichage justifié
+    # Affichage stylé du tableau radar (catégories x dimensions)
     st.markdown("""
         <style>
         .radar-justif th, .radar-justif td {
