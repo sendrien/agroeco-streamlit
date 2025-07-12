@@ -138,7 +138,7 @@ h2 {
     transition: color 0.4s;
 }
 .stTabs [data-baseweb="tab-list"] {
-    border-bottom: 50.5px solid #027368 !important;
+    border-bottom: 2.5px solid #027368 !important;
 }
 .stTabs [data-baseweb="tab"] {
     color: #5C7373 !important;
@@ -158,7 +158,7 @@ h2 {
     position: fixed;
     left: 0;
     bottom: 0;
-    width: 100vw;
+    width: 200vw;
     min-height: 55px;
     background: #027368;
     color: #fff;
