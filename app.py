@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-# Titre de l'application
-st.title("Synthèse : Tous les résultats")
+# Configuration de la page
+st.set_page_config(page_title="Tous les résultats", layout="wide")
+st.title("Tous les résultats")
 
 # Données statiques d'exemple
-# Chaque indicateur contient une liste de dictionnaires représentant les catégories
+# Chaque indicateur contient une liste de dicts représentant les catégories
 data = {
     "Indicateur 1": [
         {"N°": 1, "Catégorie": "Producteurs", "Score": 75},
@@ -28,13 +29,37 @@ data = {
     # Ajoutez d'autres indicateurs ici
 }
 
-# Boucle d'affichage par indicateur
+# Affichage de chaque bloc indicateur
 for indicateur, rows in data.items():
-    st.subheader(indicateur)
+    st.markdown(f"### {indicateur}")
     df = pd.DataFrame(rows)
-    # Affichage du tableau
-    st.table(df)
-
-# Note : pour lancer cette application
-# 1. Installez Streamlit : pip install streamlit
-# 2. Exécutez : streamlit run app.py
+    # Renommage des colonnes pour correspondre à l'onglet Excel
+    df = df.rename(columns={
+        "N°": "N°",
+        "Catégorie": "Catégories d’acteurs",
+        "Score": "Score moyen global"
+    })
+    # Calcul de la moyenne (excluant les zéros)
+    avg = df["Score moyen global"].loc[df["Score moyen global"] != 0].mean()
+    
+    # Mise en forme du tableau pour ressembler à Excel
+    styled = df.style.hide_index().set_table_styles([
+        {
+            'selector': 'th',
+            'props': [
+                ('background-color', '#e0e0e0'),
+                ('font-weight', 'bold'),
+                ('text-align', 'center')
+            ]
+        },
+        {
+            'selector': 'td',
+            'props': [
+                ('padding', '6px'),
+                ('text-align', 'center')
+            ]
+        }
+    ])
+    st.write(styled.to_html(), unsafe_allow_html=True)
+    st.markdown(f"**Moyenne (excl. zéros) :** {avg:.2f}")
+    st.markdown("---")
