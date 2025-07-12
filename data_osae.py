@@ -49,3 +49,15 @@ dimensions = [
 ]
 
 score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
+
+
+# Effectifs de répondants par catégorie et par dimension
+effectifs = [
+    [195, 200, 199, 200, 199],    # Petits exploitants agricoles familiaux
+    [200, 200, 200, 200, 200],    # Consommateurs
+    [200, 200, 200, 200, 199],    # Membres des ONG
+    [40, 39, 40, 39, 40],         # Membres société civile
+    [20, 20, 20, 20, 20],         # Autorités administratives régionales et nationales
+    [40, 39, 40, 40, 40],         # Membres formation/recherche
+    [19, 20, 20, 20, 20],         # Membres garantie qualité
+]

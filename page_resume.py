@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from data_osae import dimensions, categories  # ← Données importées du fichier central
+from data_osae import dimensions, categories, effectifs  # ← on importe aussi effectifs
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
@@ -13,14 +13,12 @@ def get_dimension_scores_per_categorie(dimensions, categories):
                     v = indic["scores"][i]
                     if v is not None:
                         scores.append(v)
-            # Moyenne des indicateurs de la dimension pour la catégorie
             if scores:
                 mean_score = round(sum(scores) / len(scores), 2)
             else:
                 mean_score = None
             cat_scores.append(mean_score)
         data.append(cat_scores)
-    # Construire le DataFrame
     df = pd.DataFrame(
         data,
         columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
@@ -45,12 +43,18 @@ def get_global_scores_by_dimension(dimensions):
     df = pd.DataFrame(rows)
     return df
 
+def get_effectifs_by_categorie_and_dimension(effectifs, dimensions, categories):
+    return pd.DataFrame(
+        effectifs,
+        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
+        index=categories
+    )
+
 def show_page_resume():
     st.markdown("<h3 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
 
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
 
-    # Affichage stylé du tableau radar (catégories x dimensions)
     st.markdown("""
         <style>
         .radar-justif th, .radar-justif td {
@@ -64,15 +68,13 @@ def show_page_resume():
         .radar-justif { width: 100% !important; border-radius: 7px !important; }
         </style>
     """, unsafe_allow_html=True)
-
     st.markdown(
-        radar_df.reset_index().to_html(index=False, classes="radar-justif", border=0), 
+        radar_df.reset_index().to_html(index=False, classes="radar-justif", border=0),
         unsafe_allow_html=True
     )
-
     st.info("Ce tableau est structuré pour permettre la génération du radar plot : chaque ligne = une catégorie d’acteurs, chaque colonne = une dimension (moyenne de ses indicateurs pour la catégorie).")
 
-    # --- Tableau score moyen global par dimension (non pondéré)
+    # Score moyen global par dimension (non pondéré)
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Score moyen global par dimension (non pondéré)</h3>", unsafe_allow_html=True)
 
     dim_df = get_global_scores_by_dimension(dimensions)
@@ -90,8 +92,28 @@ def show_page_resume():
         .dimscore-justif { width: 90% !important; border-radius: 7px !important; }
         </style>
     """, unsafe_allow_html=True)
-
     st.markdown(
         dim_df.to_html(index=False, classes="dimscore-justif", border=0),
+        unsafe_allow_html=True
+    )
+
+    # Tableau effectifs par catégorie et dimension
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Nombre de répondants par catégorie d’acteurs et par dimension</h3>", unsafe_allow_html=True)
+    eff_df = get_effectifs_by_categorie_and_dimension(effectifs, dimensions, categories)
+    st.markdown("""
+        <style>
+        .effectif-justif th, .effectif-justif td {
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-size: 1.08em;
+            padding: 8px 12px !important;
+        }
+        .effectif-justif th { background: #027368 !important; color: #fff; font-size: 0.93em;}
+        .effectif-justif { width: 90% !important; border-radius: 7px !important; }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown(
+        eff_df.reset_index().to_html(index=False, classes="effectif-justif", border=0),
         unsafe_allow_html=True
     )
