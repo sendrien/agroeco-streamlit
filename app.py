@@ -16,91 +16,91 @@ PAGE_ICONS = {
     "Graphiques": "📊",
 }
 
-# ---------- NAVBAR CSS & HTML ----------
+# NAVBAR CSS & HTML moderne, sans padding/marge extérieure
 st.markdown("""
 <style>
+body, .stApp { background: #F6F8F7 !important; padding: 0 !important; }
 .osae-navbar {
     width: 100vw;
-    min-height: 70px;
+    height: 74px;
     background: #027368;
     color: #fff;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: stretch;
-    box-shadow: 0 2px 20px #02736819;
-    padding: 0 0 0 0;
-    margin-bottom: 0.6em;
-    border-radius: 0 0 18px 18px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    box-shadow: 0 3px 16px #02736821;
+    padding: 0 0.7em 0 0.3em;
+    margin: 0 0 1.2em 0;
+    border-radius: 0;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 999;
 }
 .osae-navbar .osae-title {
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-    font-size: 2.0em;
+    font-size: 2.05em;
     font-weight: 800;
-    letter-spacing: 0.01em;
     color: #fff;
-    padding: 0.7em 1.4em 0.7em 1.1em;
+    padding: 0 1.2em;
     display: flex;
     align-items: center;
-    transition: color 0.25s;
     text-shadow: 0 2px 8px #011F2612;
     user-select: none;
     text-decoration: none;
-    border-right: 1.8px solid #01726533;
+    border-right: 2px solid #01938355;
+    letter-spacing: 0.01em;
 }
 .osae-navbar .osae-tabs {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    padding-right: 1.3em;
+    gap: 0.2em;
+    padding-right: 1.2em;
+    height: 100%;
 }
 .osae-navbar .osae-tab {
     color: #fff;
     font-size: 1.08em;
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
     font-weight: 600;
-    padding: 0.7em 1.15em;
-    margin-left: 0.15em;
+    padding: 0 1.25em;
+    margin-left: 0.25em;
     border: none;
     background: none;
     outline: none;
     cursor: pointer;
-    border-radius: 9px 9px 0 0;
-    transition: background 0.2s, color 0.19s, box-shadow 0.3s;
-    box-shadow: none;
+    border-radius: 0 0 7px 7px;
     display: flex;
     align-items: center;
     gap: 0.45em;
+    height: 74px;
+    box-shadow: none;
     text-decoration: none;
     position: relative;
+    transition: background 0.2s, color 0.16s, box-shadow 0.3s;
 }
 .osae-navbar .osae-tab.active,
 .osae-navbar .osae-tab:focus,
 .osae-navbar .osae-tab:hover {
-    background: #01584e;
+    background: #016055;
     color: #FFD700 !important;
     outline: none;
-    box-shadow: 0 2px 16px #FFD70011;
+    box-shadow: 0 5px 16px #FFD7000A;
 }
 @media (max-width: 900px) {
-    .osae-navbar { flex-direction: column; min-height: unset; padding: 0 0 0 0;}
-    .osae-navbar .osae-title { font-size: 1.2em; padding: 0.6em 0.9em 0.3em 1em; border-right: none; border-bottom: 1.5px solid #01726533; }
-    .osae-navbar .osae-tabs { padding: 0.15em 0.6em 0.6em 0.7em; }
-    .osae-navbar .osae-tab { font-size: 1em; padding: 0.4em 0.7em; }
+    .osae-navbar { flex-direction: column; height: unset; }
+    .osae-navbar .osae-title { font-size: 1.13em; padding: 0.45em 0.7em 0.2em 0.9em; border-right: none; border-bottom: 1.5px solid #01938355;}
+    .osae-navbar .osae-tabs { padding: 0.1em 0.2em 0.5em 0.6em; }
+    .osae-navbar .osae-tab { font-size: 0.98em; height: 46px; padding: 0 0.7em;}
 }
+.stApp { padding-top: 88px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- NAVBAR LOGIQUE ----------
 if "navpage" not in st.session_state:
     st.session_state["navpage"] = list(PAGES.keys())[0]
 
-# Navbar HTML (plus accessible, boutons vrais pour focus clavier)
 navbar_html = f'''
-<nav class="osae-navbar">
+<nav class="osae-navbar" role="navigation" aria-label="Navigation principale">
     <div class="osae-title" tabindex="0">
         Outil Statistique Agro-économie (OSAE)
     </div>
@@ -118,7 +118,7 @@ for page in PAGES.keys():
 navbar_html += '</div></nav>'
 st.markdown(navbar_html, unsafe_allow_html=True)
 
-# Navigation JS (mémorise l'onglet sélectionné)
+# JS navigation persistante
 st.markdown("""
 <script>
 window.addEventListener('message', (event) => {
@@ -136,7 +136,6 @@ window.onload = () => {
 </script>
 """, unsafe_allow_html=True)
 
-# Gérer le paramètre navpage (pour navigation "persistante" Streamlit)
 import urllib.parse
 query_string = st.query_params if hasattr(st, "query_params") else st.experimental_get_query_params()
 navpage = st.session_state.get("navpage", list(PAGES.keys())[0])
@@ -146,12 +145,12 @@ if "navpage" in query_string:
         navpage = navpage_q
         st.session_state["navpage"] = navpage
 
-# Afficher la page sélectionnée
+# --- Affiche la page courante ---
 PAGES[navpage]()
 
-# --- Footer (identique, bien visible, optionnel) ---
+# --- Footer ---
 st.markdown("""
-    <div class="footer">
+    <div class="footer" style="background:#027368;color:#fff;font-size:1rem;font-family:Segoe UI,Roboto,Arial,sans-serif;text-align:center;letter-spacing:0.01em;padding:13px 0 10px 0;margin:0;box-shadow:0 -2px 12px #02736833;">
         © 2025 OSAE — Outil Statistique Agro-Economie | Développé par IT STRATEGIX
     </div>
 """, unsafe_allow_html=True)
