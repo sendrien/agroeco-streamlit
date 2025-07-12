@@ -61,15 +61,15 @@ div[role="button"][aria-expanded] > span {
     transition: color 0.4s;
 }
 [data-testid="stExpander"] {
-    //background: #F4F7F6 !important;
-    //border-radius: 13px !important;
-    //margin-bottom: 14px !important;
-    //box-shadow: 0 2px 16px #02736815;
-    //transition: background 0.5s, box-shadow 0.5s;
-}
-[data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
     background: #F4F7F6 !important;
     border-radius: 13px !important;
+    margin-bottom: 14px !important;
+    box-shadow: 0 2px 16px #02736815;
+    transition: background 0.5s, box-shadow 0.5s;
+}
+[data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
+    background: yellow !important;
+    border-radius: 1px !important;
 }
 .score-global-acc {
     background: #027368;
