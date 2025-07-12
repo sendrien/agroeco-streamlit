@@ -1,3 +1,33 @@
+import streamlit as st
+import pandas as pd
+from data_osae import dimensions, categories  # ← Données importées du fichier central
+
+def get_dimension_scores_per_categorie(dimensions, categories):
+    data = []
+    for i, cat in enumerate(categories):
+        cat_scores = []
+        for dim in dimensions:
+            scores = []
+            for indic in dim["indicateurs"]:
+                if i < len(indic["scores"]):
+                    v = indic["scores"][i]
+                    if v is not None:
+                        scores.append(v)
+            # Moyenne des indicateurs de la dimension pour la catégorie
+            if scores:
+                mean_score = round(sum(scores) / len(scores), 2)
+            else:
+                mean_score = None
+            cat_scores.append(mean_score)
+        data.append(cat_scores)
+    # Construire le DataFrame
+    df = pd.DataFrame(
+        data,
+        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
+        index=categories
+    )
+    return df
+
 def show_page_resume():
     st.markdown("<h2 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h2>", unsafe_allow_html=True)
 
