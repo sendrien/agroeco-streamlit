@@ -1,47 +1,41 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 
-# Titre de l'application
-st.title("Analyse AGROECO")
+# Titre et description
+st.title("Ma première application Streamlit")
+st.markdown("""Cette application montre comment :
+- Charger des données
+- Créer des graphiques interactifs
+- Déployer facilement sur Streamlit Cloud""")
 
-# Upload du fichier Excel
-uploaded_file = st.file_uploader("Chargez votre fichier AGROECO", type=["xlsx"])
+# Section : chargement de données
+@st.cache_data
+def load_data(n_rows=100):
+    # Génère un DataFrame aléatoire
+    df = pd.DataFrame({
+        'x': np.random.randn(n_rows),
+        'y': np.random.randn(n_rows),
+        'groupe': np.random.choice(['A', 'B', 'C'], n_rows)
+    })
+    return df
 
-if uploaded_file:
-    # Lecture de la feuille de synthèse
-    try:
-        df = pd.read_excel(uploaded_file, sheet_name="Résumé des résultats", engine="openpyxl")
-    except:
-        df = pd.read_excel(uploaded_file, sheet_name=0, engine="openpyxl")
+data = load_data(200)
+st.write("Aperçu des données", data.head())
 
-    st.success("Fichier chargé avec succès !")
+# Section : filtre par groupe
+groupe_sel = st.multiselect("Choisissez un groupe :", options=data['groupe'].unique(), default=['A','B','C'])
+filtered = data[data['groupe'].isin(groupe_sel)]
+st.write(f"Données filtrées ({len(filtered)} lignes)", filtered)
 
-    # Affichage du tableau de résumé
-    st.subheader("Résumé des scores par dimension")
-    st.dataframe(df)
+# Section : graphique
+st.subheader("Nuage de points interactif")
+st.scatter_chart(filtered, x='x', y='y')
 
-    # Graphiques simples : barres des moyennes
-    st.subheader("Graphique des scores moyens")
-    # Supposons que les colonnes sont Nom de la dimension et Score
-    if "Dimension" in df.columns and "Score moyen" in df.columns:
-        fig, ax = plt.subplots()
-        ax.bar(df["Dimension"], df["Score moyen"])
-        ax.set_xlabel("Dimension")
-        ax.set_ylabel("Score moyen")
-        ax.set_xticklabels(df["Dimension"], rotation=45, ha="right")
-        st.pyplot(fig)
-    else:
-        st.info("Le fichier ne contient pas les colonnes attendues (Dimension / Score moyen).")
-
-    # Option : afficher la feuille brute
-    if st.checkbox("Afficher la base brute (Tous les résultats)"):
-        raw = pd.read_excel(uploaded_file, sheet_name="Tous les résultats", engine="openpyxl")
-        st.subheader("Données brutes")
-        st.dataframe(raw.head(100))
-
-    # Téléchargement du rapport nettoyé
-    if st.button("Télécharger le rapport CSV nettoyé"):
-        cleaned = df.copy()
-        cleaned.to_csv("rapport_agroeco.csv", index=False)
-        st.success("Le fichier rapport_agroeco.csv a été généré dans votre environnement Streamlit.")
+# Section : slider
+st.sidebar.header("Paramètres")
+n = st.sidebar.slider("Nombre de points à afficher", min_value=50, max_value=500, value=200, step=50)
+if n != len(data):
+    data2 = load_data(n)
+    st.write(f"Derniers {n} points :", data2)
+    st.line_chart(data2[['x','y']])
