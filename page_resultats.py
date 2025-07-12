@@ -120,47 +120,6 @@ def show_page_resultats():
         opacity: 0.8;
         transition: background 0.5s;
     }
-    h1, .osae-main-title {
-        color: #011F26 !important;
-        font-size: 2.3rem !important;
-        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif !important;
-        font-weight: 900 !important;
-        letter-spacing: 0.01em !important;
-        margin-bottom: 0.1em !important;
-        margin-top: 0.15em !important;
-        text-shadow: 0 3px 8px #011F2611;
-        transition: color 0.4s, text-shadow 0.6s;
-    }
-    h2 {
-        color: #5C7373 !important;
-        font-size: 1.4rem !important;
-        font-weight: 700 !important;
-        transition: color 0.4s;
-    }
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        min-height: 60px;
-        background: #027368;
-        color: #fff;
-        text-align: center;
-        padding: 18px 0 14px 0;
-        font-size: 1.18rem;
-        font-weight: 600;
-        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-        box-shadow: 0 -2px 12px #011F2650;
-        letter-spacing: 0.01em;
-        z-index: 100;
-        transition: background 0.6s, color 0.5s;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    @media (max-width: 700px) {
-        .footer { font-size: 1rem; padding: 12px 0 10px 0;}
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -168,23 +127,34 @@ def show_page_resultats():
         {
             "nom": "Dimension environnementale",
             "indicateurs": [
-                {
-                    "nom": "Indicateur 1",
-                    "scores": [1.44, 1.7, 2.7, 2.5, 2.0, 2.5, None],
-                },
-                {
-                    "nom": "Indicateur 2",
-                    "scores": [2.0, 1.6, 3.2, 3.5, 3.0, 3.0, 3.0],
-                },
+                {"nom": "Indicateur 1", "scores": [1.44, 1.7, 2.7, 2.5, 2.0, 2.5, None]},
+                {"nom": "Indicateur 2", "scores": [2.0, 1.6, 3.2, 3.5, 3.0, 3.0, 3.0]},
             ],
         },
         {
             "nom": "Dimension économique",
             "indicateurs": [
-                {
-                    "nom": "Indicateur 3",
-                    "scores": [1.8, 2.1, 2.9, 3.0, 2.2, 2.8, 3.1],
-                }
+                {"nom": "Indicateur 3", "scores": [1.8, 2.1, 2.9, 3.0, 2.2, 2.8, 3.1]},
+            ],
+        },
+        {
+            "nom": "Dimension territoriale",
+            "indicateurs": [
+                {"nom": "Indicateur 4", "scores": [2.2, 1.9, 2.5, 3.0, 2.8, 2.3, 2.7]},
+                {"nom": "Indicateur 5", "scores": [2.0, 2.4, 2.7, 2.8, 2.5, 2.1, 2.6]},
+            ],
+        },
+        {
+            "nom": "Dimension politique et sociale",
+            "indicateurs": [
+                {"nom": "Indicateur 6", "scores": [1.7, 1.9, 2.3, 2.7, 2.4, 2.0, 2.8]},
+                {"nom": "Indicateur 7", "scores": [2.5, 2.6, 2.9, 3.0, 2.9, 2.7, 3.1]},
+            ],
+        },
+        {
+            "nom": "Dimension temporelle",
+            "indicateurs": [
+                {"nom": "Indicateur 8", "scores": [2.0, 2.2, 2.3, 2.6, 2.1, 2.5, 2.2]},
             ],
         },
     ]
@@ -198,7 +168,6 @@ def show_page_resultats():
         "Membres des structures de formation et de recherche",
         "Membres des systèmes de garantie de la qualité",
     ]
-
 
     score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
@@ -243,4 +212,3 @@ def show_page_resultats():
         "<b>Note&nbsp;:</b> Le score moyen global par dimension est la moyenne simple de tous les scores affichés dans la colonne « Scores moyens Indicateurs non pondérés par les poids des acteurs » des indicateurs de cette dimension, sans pondération selon la représentativité des groupes d'acteurs.</span>",
         unsafe_allow_html=True,
     )
-
