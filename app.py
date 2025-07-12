@@ -62,11 +62,11 @@ data = {
 
 df_ind = pd.DataFrame(data)
 
-# Calcul de la synthèse par dimension (moyenne non pondérée)
+# ─── Calcul de la synthèse par dimension ────────────────────────────────────
 df_dim = (
     df_ind
     .groupby("Dimension", as_index=True)
-    .mean()
+    .mean(numeric_only=True)  # <- ici
     .round(2)
 )
 
