@@ -103,7 +103,7 @@ div[role="button"][aria-expanded] > span {
 }
 .indicator-title-acc {
     font-size: 1.13em;
-    color: blued;
+    color: #027368;
     font-weight: 700;
     margin-top: 1.2em;
     margin-bottom: 0.35em;
@@ -112,7 +112,7 @@ div[role="button"][aria-expanded] > span {
 .ind-separator-acc {
     border: none;
     height: 3px;
-    background: #027368;
+    //background: #027368;
     margin: 1.15em 0 0.7em 0;
     border-radius: 8px;
     opacity: 0.8;
