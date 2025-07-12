@@ -8,21 +8,21 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-/* Fond général très sombre */
+/* Body blanc, tout le reste palette OSAE */
 html, body, .stApp {
-    background: #011F26 !important;
+    background: #fff !important;
 }
 
-/* Tableaux sur fond sombre */
+/* Tableaux avec couleurs de ta palette */
 .justify-table th, .justify-table td {
     text-align: justify !important;
     text-justify: inter-word !important;
     white-space: pre-line !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    font-size: 1.09em;
+    font-size: 1.08em;
     padding: 9px 16px !important;
-    color: #E5EFE7;
-    background: #032612 !important;
+    color: #032612;
+    background: #E5EFE7 !important;
     transition: background 0.5s;
 }
 .justify-table th {
@@ -31,10 +31,10 @@ html, body, .stApp {
     font-size: 1.13em;
 }
 .justify-table tr:nth-child(even) td {
-    background: #034001 !important;
+    background: #F4F7F6 !important;
 }
 .justify-table tr:hover td {
-    background: #027368 !important;
+    background: #5C7373 !important;
     color: #fff;
     transition: background 0.4s;
 }
@@ -43,7 +43,7 @@ html, body, .stApp {
     border-collapse: separate !important;
     border-spacing: 0 !important;
     border-radius: 12px !important;
-    box-shadow: 0 2px 18px #5C737355;
+    box-shadow: 0 2px 18px #5C737322;
     margin-bottom: 1.1em;
     background: transparent;
     transition: box-shadow 0.5s;
@@ -58,20 +58,20 @@ hr {
 div[role="button"][aria-expanded] > span {
     font-size: 1.32em !important;
     font-weight: 900 !important;
-    color: #fff !important;
+    color: #011F26 !important;
     letter-spacing: 0.01em;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     transition: color 0.4s;
 }
 [data-testid="stExpander"] {
-    background: #032612 !important;
+    background: #F4F7F6 !important;
     border-radius: 13px !important;
     margin-bottom: 14px !important;
-    box-shadow: 0 2px 16px #02736833;
+    box-shadow: 0 2px 16px #02736815;
     transition: background 0.5s, box-shadow 0.5s;
 }
 [data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
-    background: #032612 !important;
+    background: #F4F7F6 !important;
     border-radius: 13px !important;
 }
 .score-global-acc {
@@ -106,7 +106,7 @@ div[role="button"][aria-expanded] > span {
 }
 .indicator-title-acc {
     font-size: 1.13em;
-    color: #5C7373;
+    color: #027368;
     font-weight: 700;
     margin-top: 1.2em;
     margin-bottom: 0.35em;
@@ -124,14 +124,14 @@ div[role="button"][aria-expanded] > span {
 
 /* Titres principaux et secondaires */
 h1, .osae-main-title {
-    color: #fff !important;
+    color: #011F26 !important;
     font-size: 2.3rem !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif !important;
     font-weight: 900 !important;
     letter-spacing: 0.01em !important;
     margin-bottom: 0.1em !important;
     margin-top: 0.15em !important;
-    text-shadow: 0 3px 8px #011F2675;
+    text-shadow: 0 3px 8px #011F2611;
     transition: color 0.4s, text-shadow 0.6s;
 }
 h2 {
@@ -150,9 +150,9 @@ h2 {
     transition: color 0.4s;
 }
 .stTabs [aria-selected="true"] {
-    color: #fff !important;
+    color: #011F26 !important;
     border-bottom: 3px solid #027368 !important;
-    background: #02736820 !important;
+    background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
 }
 
@@ -170,7 +170,7 @@ h2 {
     font-size: 1.18rem;
     font-weight: 600;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    box-shadow: 0 -2px 12px #011F2660;
+    box-shadow: 0 -2px 12px #011F2650;
     letter-spacing: 0.01em;
     z-index: 100;
     transition: background 0.6s, color 0.5s;
@@ -285,14 +285,14 @@ with tab1:
 with tab2:
     st.markdown(
         "<h2 style='color:#5C7373;'>Résumé</h2>"
-        "<p style='color:#E5EFE7;'>Cette page sera prochainement complétée avec un résumé automatique des résultats.</p>",
+        "<p style='color:#032612;'>Cette page sera prochainement complétée avec un résumé automatique des résultats.</p>",
         unsafe_allow_html=True,
     )
 
 with tab3:
     st.markdown(
         "<h2 style='color:#5C7373;'>Graphiques</h2>"
-        "<p style='color:#E5EFE7;'>Les visualisations graphiques seront bientôt disponibles ici.</p>",
+        "<p style='color:#032612;'>Les visualisations graphiques seront bientôt disponibles ici.</p>",
         unsafe_allow_html=True,
     )
 
