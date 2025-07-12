@@ -58,6 +58,18 @@ def get_poids_relatif_df(categories, poids_relatif):
     })
     return df
 
+def get_total_respondants_by_dimension(effectifs, dimensions):
+    df = pd.DataFrame(
+        effectifs,
+        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
+        index=categories
+    )
+    df_total = pd.DataFrame({
+        "Dimension": df.columns,
+        "Nombre total de répondants": df.sum(axis=0).values
+    })
+    return df_total
+
 def show_page_resume():
     st.markdown("<h3 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
 
@@ -141,5 +153,26 @@ def show_page_resume():
     """, unsafe_allow_html=True)
     st.markdown(
         poids_df.to_html(index=False, classes="poidsrel-justif", border=0),
+        unsafe_allow_html=True
+    )
+
+    # Tableau nombre total de répondants par dimension
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Nombre total de répondants par dimension</h3>", unsafe_allow_html=True)
+    total_df = get_total_respondants_by_dimension(effectifs, dimensions)
+    st.markdown("""
+        <style>
+        .totalresp-justif th, .totalresp-justif td {
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-size: 1.08em;
+            padding: 8px 12px !important;
+        }
+        .totalresp-justif th { background: #027368 !important; color: #fff; font-size: 0.93em;}
+        .totalresp-justif { width: 50% !important; border-radius: 7px !important; }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown(
+        total_df.to_html(index=False, classes="totalresp-justif", border=0),
         unsafe_allow_html=True
     )
