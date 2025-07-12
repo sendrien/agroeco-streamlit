@@ -69,7 +69,7 @@ div[role="button"][aria-expanded] > span {
 }
 // Le corps de l'accordion
 [data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
-    background: white !important;
+    background: black !important;
     border-radius: 4px !important;
 }
 .score-global-acc {
