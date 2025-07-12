@@ -6,99 +6,30 @@ st.set_page_config(
     layout="wide"
 )
 
+# CSS GLOBAL pour la justification dans les tableaux HTML
 st.markdown("""
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-/* Justification tableaux */
 .justify-table th, .justify-table td {
     text-align: justify !important;
     text-justify: inter-word !important;
     white-space: pre-line !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    font-size: 1.08em;
-    padding: 7px 12px !important;
+    font-size: 1.06em;
+    padding: 7px 11px !important;
 }
 .justify-table th {
-    background: #eaf4fb !important;
+    background: #f8fafc !important;
 }
 .justify-table {
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
     border-radius: 9px !important;
-    box-shadow: 0 3px 14px #145da016;
+    box-shadow: 0 2px 10px #007c9140;
     margin-bottom: 1em;
 }
-/* Accordion améliorés */
-[data-testid="stExpander"] > div > label, div[role="button"][aria-expanded] > span {
-    font-size: 1.28em !important;
-    font-weight: 900 !important;
-    color: #145DA0 !important;
-    letter-spacing: 0.01em;
-    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-    padding-left: 0.25em;
-}
-[data-testid="stExpander"] svg {
-    color: #3BB274 !important;
-}
-/* Titres dimension */
-.dimension-title {
-    font-size: 2.18em;
-    color: #145DA0;
-    font-weight: 900;
-    letter-spacing: 0.01em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0.1em;
-}
-.indicator-title-acc {
-    font-size: 1.17em;
-    color: #3BB274;
-    font-weight: 700;
-    margin-top: 1.2em;
-    margin-bottom: 0.5em;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.score-global-acc {
-    background: #F4FAF7;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px #aee8cb30;
-    padding: 1.1em 0.7em 0.8em 0.7em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1.2em;
-    margin-top: 0.4em;
-    max-width: 360px;
-    border: 1.5px solid #b1e7cb48;
-}
-.score-global-label-acc {
-    color: #3BB274;
-    font-size: 1.09em;
-    font-weight: 600;
-    text-align: center;
-}
-.score-global-value-acc {
-    font-size: 2.1em;
-    color: #222;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 0.2em;
-    margin-bottom: 0.32em;
-}
-.ind-separator-acc {
-    border: none;
-    height: 2.5px;
-    background: #145DA0;
-    margin: 1.15em 0 0.7em 0;
-    border-radius: 6px;
-}
-span.material-icons {
-    font-size: 1.18em !important;
-    vertical-align: -0.19em !important;
+.justify-table tr:nth-child(even) {
+    background: #f4fafd !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -115,29 +46,22 @@ def df_to_justified_html(df):
 dimensions = [
     {
         "nom": "Dimension environnementale",
-        "icon": "eco",
-        "color": "#3BB274", # Vert
         "indicateurs": [
             {
                 "nom": "Indicateur 1",
-                "icon": "analytics",
                 "scores": [1.44, 1.7, 2.7, 2.5, 2.0, 2.5, None],
             },
             {
                 "nom": "Indicateur 2",
-                "icon": "show_chart",
                 "scores": [2.0, 1.6, 3.2, 3.5, 3.0, 3.0, 3.0],
             },
         ],
     },
     {
         "nom": "Dimension économique",
-        "icon": "paid",
-        "color": "#145DA0", # Bleu
         "indicateurs": [
             {
                 "nom": "Indicateur 3",
-                "icon": "bar_chart",
                 "scores": [1.8, 2.1, 2.9, 3.0, 2.2, 2.8, 3.1],
             }
         ],
@@ -155,19 +79,66 @@ categories = [
 ]
 
 st.markdown(
-    "<div class='dimension-title'><span class='material-icons'>apps</span>Outil Statistique Agro-Economie (OSAE)</div>",
+    "<h1 style='color:#145DA0; font-size:2.7rem; margin-bottom:0.2em;'>Outil Statistique Agro-Economie (OSAE)</h1>",
     unsafe_allow_html=True,
 )
 st.markdown("<hr>", unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs([
-    "📋 Syntèse structurée des résultats", 
-    "📝 Résumé", 
-    "📊 Graphiques"
-])
+tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 Résumé", "📊 Graphiques"])
 
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("""
+        <style>
+        div[role="button"][aria-expanded] > span {
+            font-size: 1.55em !important;
+            font-weight: 900 !important;
+            color: #145DA0 !important;
+            letter-spacing: 0.01em;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        }
+        .score-global-acc {
+            background: #F3FAFD;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px #007c9140;
+            padding: 1.1em 0.7em 0.8em 0.7em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.2em;
+            margin-top: 0.4em;
+            max-width: 350px;
+        }
+        .score-global-label-acc {
+            color: #007C91;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+        }
+        .score-global-value-acc {
+            font-size: 2em;
+            color: #222;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0.22em;
+            margin-bottom: 0.3em;
+        }
+        .indicator-title-acc {
+            font-size: 1.08em;
+            color: #333;
+            font-weight: 600;
+            margin-top: 1.2em;
+            margin-bottom: 0.3em;
+        }
+        .ind-separator-acc {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, #007C91 18%, #fff 95%);
+            margin: 1.2em 0 0.7em 0;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
     score_colname = "Scores moyens Indicateurs non pondérés par les poids des acteurs"
 
@@ -176,19 +147,12 @@ with tab1:
         for ind in dimension["indicateurs"]:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
-        color = dimension.get("color", "#145DA0")
-        icon = dimension.get("icon", "apps")
 
-        with st.expander(
-            f"<span class='material-icons'>{icon}</span> "
-            f"<span style='color:{color};font-size:1.23em;font-weight:700;'>{dimension['nom']}</span>", 
-            expanded=(i == 0)
-        ):
+        with st.expander(f"{dimension['nom']}", expanded=(i == 0)):
             st.markdown(
                 f"""
                 <div class="score-global-acc">
                     <div class="score-global-label-acc">
-                        <span class="material-icons" style="color:{color};">star_rate</span>
                         Score moyen global<br>par dimension (non pondéré)
                     </div>
                     <div class="score-global-value-acc">{score_global_dimension}</div>
@@ -197,12 +161,8 @@ with tab1:
             )
 
             for idx, ind in enumerate(dimension["indicateurs"]):
-                ind_icon = ind.get("icon", "info")
                 st.markdown(
-                    f"""<div class="indicator-title-acc">
-                    <span class="material-icons" style="color:{color};">{ind_icon}</span>
-                    {ind["nom"]}
-                    </div>""",
+                    f'<div class="indicator-title-acc">&#x25B6;&nbsp;{ind["nom"]}</div>',
                     unsafe_allow_html=True
                 )
                 data = {
@@ -226,14 +186,14 @@ with tab1:
 
 with tab2:
     st.markdown(
-        "<h2 style='color:#145DA0;'><span class='material-icons' style='vertical-align:-3px;'>description</span> Résumé</h2>"
+        "<h2 style='color:#145DA0;'>Résumé</h2>"
         "<p style='color:gray;'>Cette page sera prochainement complétée avec un résumé automatique des résultats.</p>",
         unsafe_allow_html=True,
     )
 
 with tab3:
     st.markdown(
-        "<h2 style='color:#145DA0;'><span class='material-icons' style='vertical-align:-3px;'>insert_chart</span> Graphiques</h2>"
+        "<h2 style='color:#145DA0;'>Graphiques</h2>"
         "<p style='color:gray;'>Les visualisations graphiques seront bientôt disponibles ici.</p>",
         unsafe_allow_html=True,
     )
@@ -259,7 +219,6 @@ st.markdown("""
     }
     </style>
     <div class="footer">
-        <span class="material-icons" style="vertical-align:-3px;font-size:1.11em;">copyright</span>
-        2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
+        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
     </div>
 """, unsafe_allow_html=True)
