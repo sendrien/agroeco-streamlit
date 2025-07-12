@@ -32,8 +32,8 @@ st.markdown("""
         left: 0;
         bottom: 0;
         width: 100vw;
-        background: #E5EFE7;
-        color: dark;
+        background: #027368;
+        color: white;
         text-align: center;
         padding: 10px 0 7px 0;
         font-size: 1rem;
@@ -45,10 +45,11 @@ st.markdown("""
         .footer { font-size: 0.93rem; padding: 8px 0 5px 0;}
     }
     </style>
-    <div class="footer">
-        <span class="material-icons" style="vertical-align:-3px;font-size:1.11em;color:#034001;">copyright</span>
-        2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
-    </div>
+    
 """, unsafe_allow_html=True)
 
-
+st.markdown("""
+    <div class="footer">
+        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
+    </div>
+""", unsafe_allow_html=True)
