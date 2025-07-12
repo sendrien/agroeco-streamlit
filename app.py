@@ -2,7 +2,7 @@
 """
 Streamlit app pour charger le fichier AGROECO et afficher automatiquement
 les visualisations synthétiques (barres, courbes, heatmap) des indicateurs
-et indices de collaboration (Graphiques finaux).
+et indices de collaboration.
 """
 import io
 import streamlit as st
@@ -54,56 +54,65 @@ uploaded_file = st.file_uploader("Téléversez le fichier Excel AGROECO", type=[
 if uploaded_file:
     try:
         in_memory = io.BytesIO(uploaded_file.read())
-        # Extraction des données de résumé
-        df_summary = pd.read_excel(in_memory, sheet_name='Résumé des résultats', header=None)
-        # Bar chart : indices des principales dimensions
-        dims = ['Environnementale', 'Economique', 'Politique et sociale', 'Territoriale', 'Temporelle']
-        dim_data = []
-        for idx, row in df_summary.iterrows():
-            if isinstance(row[0], str) and row[0] in dims and pd.notnull(row[1]):
-                dim_data.append({'Dimension': row[0], 'Score moyen': float(row[1])})
-        df_dim = pd.DataFrame(dim_data)
-
-        # Lecture des autres feuilles Excel via ExcelFile pour reuse
-        from pandas import ExcelFile
-        xls = ExcelFile(in_memory)
+        xls = pd.ExcelFile(in_memory)
 
         tabs = st.tabs([
-            "Barres - Dimensions",
+            "Barres - Indicateurs",
             "Heatmap - Collaboration",
             "Courbes - Indices collaboration"
         ])
 
-        # 1) Bar chart principales dimensions
+        # 1) Bar charts pour chaque dimension d'indicateurs
         with tabs[0]:
-            st.header("Indices des Principales Dimensions")
-            if not df_dim.empty:
-                fig = plot_bar_chart(df_dim, 'Dimension', 'Score moyen', 'Indices des Dimensions')
-                st.pyplot(fig)
-            else:
-                st.warning("Impossible d'extraire les indices des dimensions.")
+            st.header("Indicateurs par Dimension")
+            indicator_sheets = {
+                '1. Indicateurs environnementaux': 'Environnementaux',
+                '2. Indicateurs économiques': 'Économiques',
+                '3. Indicateurs politico-sociaux': 'Politico-sociaux',
+                '4. Indicateurs territoriaux': 'Territoriaux',
+                '5. Indicateurs temporels': 'Temporels'
+            }
+            for sheet_name, label in indicator_sheets.items():
+                if sheet_name in xls.sheet_names:
+                    df = xls.parse(sheet_name)
+                    if 'Indicateur' in df.columns and 'Score moyen' in df.columns:
+                        df_clean = df[['Indicateur', 'Score moyen']].dropna()
+                        # Conversion en float (gère virgule comme séparateur décimal)
+                        df_clean['Score moyen'] = pd.to_numeric(
+                            df_clean['Score moyen'].astype(str)
+                                       .str.replace(',', '.', regex=False),
+                            errors='coerce'
+                        )
+                        df_clean = df_clean.dropna(subset=['Score moyen'])
+                        fig = plot_bar_chart(df_clean, 'Indicateur', 'Score moyen', f'Indicateurs {label}')
+                        st.pyplot(fig)
 
         # 2) Heatmap de la matrice de collaboration
         with tabs[1]:
             st.header("Matrice des Indices de Collaboration")
-            df_coll_matrix = pd.read_excel(in_memory, sheet_name='Résumé des résultats', header=1, index_col=0)
-            # Extraire zone carrée (nombre de catégories d'acteurs)
-            n = min(df_coll_matrix.shape)
-            mat = df_coll_matrix.iloc[:n, :n]
-            # Convertir en float (virgule décimale)
-            mat = mat.applymap(lambda x: float(str(x).replace(',', '.')) if pd.notnull(x) else np.nan)
-            fig = plot_heatmap(mat, 'Collaboration entre Acteurs')
-            st.pyplot(fig)
+            if 'Résumé des résultats' in xls.sheet_names:
+                df_summary = xls.parse('Résumé des résultats', index_col=0)
+                # Extraire zone carrée
+                n = min(df_summary.shape)
+                collab_matrix = df_summary.iloc[:n, :n]
+                # Conversion en float
+                collab_matrix = collab_matrix.applymap(
+                    lambda x: float(str(x).replace(',', '.')) if pd.notnull(x) else np.nan
+                )
+                fig = plot_heatmap(collab_matrix, 'Collaboration entre Acteurs')
+                st.pyplot(fig)
 
         # 3) Line charts pour les indices de collaboration détaillés
         with tabs[2]:
             st.header("Indices de Collaboration Détaillés")
             if '6. Indices de collaboration' in xls.sheet_names:
-                df_coll = pd.read_excel(in_memory, sheet_name='6. Indices de collaboration')
+                df_coll = xls.parse('6. Indices de collaboration')
                 if 'Acteur source' in df_coll.columns and 'Score moyen' in df_coll.columns:
                     # Conversion Score moyen
                     df_coll['Score moyen'] = pd.to_numeric(
-                        df_coll['Score moyen'].astype(str).str.replace(',', '.', regex=False), errors='coerce'
+                        df_coll['Score moyen'].astype(str)
+                                  .str.replace(',', '.', regex=False),
+                        errors='coerce'
                     )
                     df_pivot = df_coll.pivot(
                         index='Acteur source', columns='Acteur cible', values='Score moyen'
@@ -114,12 +123,8 @@ if uploaded_file:
                         'Indices de Collaboration par Acteur'
                     )
                     st.pyplot(fig)
-                else:
-                    st.warning("Structure inattendue de la feuille '6. Indices de collaboration'.")
-            else:
-                st.warning("Feuille '6. Indices de collaboration' introuvable.")
 
     except Exception as e:
-        st.error(f"Erreur lors du traitement du fichier : {e}")
+        st.error(f"Erreur lors du traitement du fichier: {e}")
 else:
     st.info("Veuillez téléverser un fichier Excel pour commencer.")
