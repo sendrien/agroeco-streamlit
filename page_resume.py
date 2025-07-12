@@ -28,6 +28,23 @@ def get_dimension_scores_per_categorie(dimensions, categories):
     )
     return df
 
+def get_global_scores_by_dimension(dimensions):
+    rows = []
+    for dim in dimensions:
+        scores = []
+        for indic in dim["indicateurs"]:
+            scores += [v for v in indic["scores"] if v is not None]
+        if scores:
+            mean = round(sum(scores) / len(scores), 1)
+        else:
+            mean = None
+        rows.append({
+            "Dimension": dim["nom"].replace("Dimension ", ""),
+            "Score moyen global par dimension (non pondéré)": mean
+        })
+    df = pd.DataFrame(rows)
+    return df
+
 def show_page_resume():
     st.markdown("<h3 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
 
@@ -54,3 +71,27 @@ def show_page_resume():
     )
 
     st.info("Ce tableau est structuré pour permettre la génération du radar plot : chaque ligne = une catégorie d’acteurs, chaque colonne = une dimension (moyenne de ses indicateurs pour la catégorie).")
+
+    # --- Tableau score moyen global par dimension (non pondéré)
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Score moyen global par dimension (non pondéré)</h3>", unsafe_allow_html=True)
+
+    dim_df = get_global_scores_by_dimension(dimensions)
+
+    st.markdown("""
+        <style>
+        .dimscore-justif th, .dimscore-justif td {
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-size: 1.08em;
+            padding: 8px 12px !important;
+        }
+        .dimscore-justif th { background: #027368 !important; color: #fff; font-size: 0.93em;}
+        .dimscore-justif { width: 90% !important; border-radius: 7px !important; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown(
+        dim_df.to_html(index=False, classes="dimscore-justif", border=0),
+        unsafe_allow_html=True
+    )
