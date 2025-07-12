@@ -148,8 +148,8 @@ h2 {
 }
 .stTabs [aria-selected="true"] {
     color: #011F26 !important;
-    border-bottom: 3px solid #027368 !important;
-    background: #02736810 !important;
+    //border-bottom: 3px solid #027368 !important;
+    //background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
 }
 
