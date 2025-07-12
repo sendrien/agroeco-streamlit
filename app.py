@@ -1,7 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-# Données statiques des dimensions et indicateurs (identique à la version précédente)
+# Met la page en mode large
+st.set_page_config(
+    page_title="Outil Statistique Agro-Economie (OSAE)",
+    layout="wide"
+)
+
 dimensions = [
     {
         "nom": "Dimension environnementale",
@@ -25,7 +30,6 @@ dimensions = [
             }
         ],
     },
-    # Ajoute d'autres dimensions et indicateurs ici si besoin
 ]
 
 categories = [
@@ -65,27 +69,31 @@ with tab1:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
 
-        st.markdown(
-            f"<h3 style='color:#007C91;'>{dimension['nom']}</h3>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"""
-            <div style='float:right;background:#F3FAFD;border-radius:18px;padding:16px 25px 11px 25px;
-            box-shadow:0 3px 12px #007c9140;margin-bottom:25px;'>
-                <div style='color:#007C91;font-size:1em;font-weight:bold;'>
-                    Score moyen global<br>par dimension (non pondéré)
+        # Utilise les colonnes pour bien disposer score global et tableaux
+        cols = st.columns([4, 1])
+        with cols[0]:
+            st.markdown(
+                f"<h3 style='color:#007C91;'>{dimension['nom']}</h3>",
+                unsafe_allow_html=True,
+            )
+        with cols[1]:
+            st.markdown(
+                f"""
+                <div style='background:#F3FAFD;border-radius:18px;padding:20px 28px 14px 28px;
+                box-shadow:0 3px 12px #007c9140;margin-bottom:20px;margin-top:15px;'>
+                    <div style='color:#007C91;font-size:1em;font-weight:bold;'>
+                        Score moyen global<br>par dimension (non pondéré)
+                    </div>
+                    <div style='font-size:2em;color:#222;text-align:center;font-weight:bold;margin-top:3px;'>
+                        {score_global_dimension}
+                    </div>
                 </div>
-                <div style='font-size:2em;color:#222;text-align:center;font-weight:bold;margin-top:3px;'>
-                    {score_global_dimension}
-                </div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+                """, unsafe_allow_html=True
+            )
 
         for ind in dimension["indicateurs"]:
             st.markdown(
-                f"<div style='font-size:1.1em;font-weight:bold;color:#333;margin-top:44px;'>"
+                f"<div style='font-size:1.1em;font-weight:bold;color:#333;margin-top:30px;'>"
                 f"&#x25B6;&nbsp;{ind['nom']}</div>", unsafe_allow_html=True
             )
             data = {
