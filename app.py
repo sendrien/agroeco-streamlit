@@ -74,14 +74,14 @@ div[role="button"][aria-expanded] > span {
 .score-global-acc {
     background: #027368;
     border-radius: 4px;
-    box-shadow: 0 2px 8px #02736822;
+    box-shadow: 0 2px 2px #02736822;
     padding: 1.1em 0.7em 0.8em 0.7em;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 1.2em;
     margin-top: 0.4em;
-    max-width: 200px;
+    max-width: 355px;
     border: 1.2px solid #034001;
     transition: box-shadow 0.5s, background 0.5s;
 }
