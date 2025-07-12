@@ -24,6 +24,33 @@ with tab3:
 
 
 
+# --- FOOTER ---
+st.markdown("""
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background: #E5EFE7;
+        color: #027368;
+        text-align: center;
+        padding: 10px 0 7px 0;
+        font-size: 1rem;
+        box-shadow: 0 -1px 6px #02736822;
+        z-index: 100;
+        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    }
+    @media (max-width: 700px) {
+        .footer { font-size: 0.93rem; padding: 8px 0 5px 0;}
+    }
+    </style>
+    <div class="footer">
+        <span class="material-icons" style="vertical-align:-3px;font-size:1.11em;color:#034001;">copyright</span>
+        2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
+    </div>
+""", unsafe_allow_html=True)
+
 st.markdown("""
     <div class="footer">
         © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
