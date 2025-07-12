@@ -143,11 +143,11 @@ h2 {
 .stTabs [data-baseweb="tab"] {
     color: #5C7373 !important;
     font-weight: 600;
-    font-size: 10.09em;
+    font-size: 1.09em;
     transition: color 0.4s;
 }
 .stTabs [aria-selected="true"] {
-    color: #011F26 !important;
+    color: blue !important;
     border-bottom: 3px solid #027368 !important;
     background: #02736810 !important;
     transition: color 0.4s, border 0.4s;
