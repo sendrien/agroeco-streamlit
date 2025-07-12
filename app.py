@@ -68,7 +68,7 @@ div[role="button"][aria-expanded] > span {
     transition: background 0.5s, box-shadow 0.5s;
 }
 [data-testid="stExpander"] > div, [data-testid="stExpander"] > details {
-    background: red !important;
+    background: white !important;
     border-radius: 4px !important;
 }
 .score-global-acc {
