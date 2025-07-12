@@ -159,7 +159,7 @@ h2 {
     left: 0;
     bottom: 0;
     width: 100vw;
-    min-height: 100px;
+    min-height: 60px;
     background: #027368;
     color: #fff;
     text-align: center;
