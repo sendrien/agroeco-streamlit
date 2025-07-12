@@ -52,7 +52,7 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # CSS personnalisé pour accordions
+    # CSS personnalisé pour accordions + tableaux
     st.markdown("""
         <style>
         /* ACCORDION TITLE */
@@ -102,6 +102,24 @@ with tab1:
             height: 2px;
             background: linear-gradient(90deg, #007C91 18%, #fff 95%);
             margin: 1.2em 0 0.7em 0;
+        }
+        /* Style custom pour les colonnes des DataFrames */
+        div[data-testid="stDataFrame"] table {
+            width: 100%;
+        }
+        div[data-testid="stDataFrame"] th:nth-child(1),
+        div[data-testid="stDataFrame"] td:nth-child(1) {
+            min-width: 38px !important;
+            max-width: 45px !important;
+            width: 40px !important;
+            text-align: center !important;
+        }
+        div[data-testid="stDataFrame"] th:nth-child(3),
+        div[data-testid="stDataFrame"] td:nth-child(3) {
+            min-width: 85px !important;
+            max-width: 110px !important;
+            width: 92px !important;
+            text-align: center !important;
         }
         </style>
     """, unsafe_allow_html=True)
