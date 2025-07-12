@@ -42,7 +42,7 @@ categories = [
 ]
 
 st.markdown(
-    "<h1 style='color:#007C91; font-size:2.7rem; margin-bottom:0.2em;'>Outil Statistique Agro-Economie (OSAE)</h1>",
+    "<h1 style='color:#145DA0; font-size:2.7rem; margin-bottom:0.2em;'>Outil Statistique Agro-Economie (OSAE)</h1>",
     unsafe_allow_html=True,
 )
 st.markdown("<hr>", unsafe_allow_html=True)
@@ -52,15 +52,16 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Style pour le score global, séparateurs, et titres des accordions
+    # CSS personnalisé pour accordions
     st.markdown("""
         <style>
-        /* Accordion Title */
+        /* ACCORDION TITLE */
         div[role="button"][aria-expanded] > span {
-            font-size: 1.35em !important;
-            font-weight: bold !important;
-            color: #007C91 !important;
+            font-size: 1.55em !important;
+            font-weight: 900 !important;
+            color: #145DA0 !important;
             letter-spacing: 0.01em;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
         }
         /* Score global block */
         .score-global-acc {
@@ -148,14 +149,14 @@ with tab1:
 
 with tab2:
     st.markdown(
-        "<h2 style='color:#007C91;'>Résumé</h2>"
+        "<h2 style='color:#145DA0;'>Résumé</h2>"
         "<p style='color:gray;'>Cette page sera prochainement complétée avec un résumé automatique des résultats.</p>",
         unsafe_allow_html=True,
     )
 
 with tab3:
     st.markdown(
-        "<h2 style='color:#007C91;'>Graphiques</h2>"
+        "<h2 style='color:#145DA0;'>Graphiques</h2>"
         "<p style='color:gray;'>Les visualisations graphiques seront bientôt disponibles ici.</p>",
         unsafe_allow_html=True,
     )
@@ -169,7 +170,7 @@ st.markdown("""
         bottom: 0;
         width: 100vw;
         background: #F3FAFD;
-        color: #007C91;
+        color: #145DA0;
         text-align: center;
         padding: 10px 0 7px 0;
         font-size: 1rem;
