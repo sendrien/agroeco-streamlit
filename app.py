@@ -23,7 +23,7 @@ html, body, .stApp {
     transition: background 0.5s;
 }
 .justify-table th {
-    background: yelow !important;
+    background: #027368 !important;
     color: #fff;
     font-size: 1.13em;
 }
