@@ -26,6 +26,6 @@ with tab3:
 
 st.markdown("""
     <div class="footer">
-        © 2025 OSA — Outil Statistique Agro-2conomie | Développé par IT STRATEGIX
+        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
     </div>
 """, unsafe_allow_html=True)
