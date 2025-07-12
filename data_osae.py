@@ -43,7 +43,7 @@ dimensions = [
     {
         "nom": "Dimension temporelle",
         "indicateurs": [
-            {"nom": "Indicateur 8", "scores": [2.0, 2.2, 2.3, 2.6, 2.1, 2.5, 2.2]},
+            {"nom": "Indicateur 8", "scores": [2.0, 2.2, 2.3, 2.6, 2.1, 2.5, 2.8]},
         ],
     },
 ]
