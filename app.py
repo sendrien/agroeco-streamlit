@@ -28,7 +28,7 @@ html, body, .stApp {
     font-size: 0.8em;
 }
 .justify-table tr:nth-child(even) td {
-    background: #F4F7F6 !important;
+    background: yellow !important;
 }
 .justify-table tr:hover td {
     background: #d7ece9 !important;  /* Doux, subtil */
