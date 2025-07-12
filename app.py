@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-# Met la page en mode large
 st.set_page_config(
     page_title="Outil Statistique Agro-Economie (OSAE)",
     layout="wide"
@@ -50,15 +49,11 @@ st.markdown(
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # --- ONGLET ---
-tab1, tab2, tab3 = st.tabs(["📋 Résultats", "📝 Résumé", "📊 Graphiques"])
+tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 Résumé", "📊 Graphiques"])
 
 with tab1:
     st.markdown(
         "<h2 style='color:#007C91; font-size:2rem; margin-bottom:0.5em;'>Synthèse structurée des résultats par dimension</h2>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<h4 style='color:gray; font-weight:400;margin-top:-10px;'>Analyse agrégée par catégorie d'acteurs</h4>",
         unsafe_allow_html=True,
     )
     st.markdown("<br>", unsafe_allow_html=True)
@@ -69,8 +64,7 @@ with tab1:
             all_scores += [v for v in ind["scores"] if v is not None]
         score_global_dimension = round(sum(all_scores) / len(all_scores), 2)
 
-        # Utilise les colonnes pour bien disposer score global et tableaux
-        cols = st.columns([4, 1])
+        cols = st.columns([5, 1.7])
         with cols[0]:
             st.markdown(
                 f"<h3 style='color:#007C91;'>{dimension['nom']}</h3>",
@@ -79,9 +73,9 @@ with tab1:
         with cols[1]:
             st.markdown(
                 f"""
-                <div style='background:#F3FAFD;border-radius:18px;padding:20px 28px 14px 28px;
-                box-shadow:0 3px 12px #007c9140;margin-bottom:20px;margin-top:15px;'>
-                    <div style='color:#007C91;font-size:1em;font-weight:bold;'>
+                <div style='background:#F3FAFD;border-radius:18px;padding:1.2em 0.5em 1.2em 0.5em;
+                box-shadow:0 3px 12px #007c9140;margin-bottom:18px;margin-top:10px;width:100%;'>
+                    <div style='color:#007C91;font-size:1em;font-weight:bold;text-align:center;'>
                         Score moyen global<br>par dimension (non pondéré)
                     </div>
                     <div style='font-size:2em;color:#222;text-align:center;font-weight:bold;margin-top:3px;'>
@@ -126,3 +120,28 @@ with tab3:
         "<p style='color:gray;'>Les visualisations graphiques seront bientôt disponibles ici.</p>",
         unsafe_allow_html=True,
     )
+
+# --- FOOTER ---
+st.markdown("""
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background: #F3FAFD;
+        color: #007C91;
+        text-align: center;
+        padding: 10px 0 7px 0;
+        font-size: 1rem;
+        box-shadow: 0 -1px 6px #007c9140;
+        z-index: 100;
+    }
+    @media (max-width: 700px) {
+        .footer { font-size: 0.93rem; padding: 8px 0 5px 0;}
+    }
+    </style>
+    <div class="footer">
+        © 2025 OSAE — Outil Statistique Agro-Economie | Développé par votre équipe
+    </div>
+""", unsafe_allow_html=True)
