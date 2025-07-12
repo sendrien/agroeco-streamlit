@@ -6,20 +6,42 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS GLOBAL pour justifier tout le texte dans les tableaux (dataframe)
+# CSS GLOBAL pour la justification dans les tableaux HTML
 st.markdown("""
 <style>
-[data-testid="stDataFrame"] .css-1v0mbdj,
-[data-testid="stDataFrame"] .css-1v0mbdj span,
-[data-testid="stDataFrame"] .css-1r6slb0,
-[data-testid="stDataFrame"] .css-1r6slb0 span {
+.justify-table th, .justify-table td {
     text-align: justify !important;
     text-justify: inter-word !important;
     white-space: pre-line !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    font-size: 1.06em;
+    padding: 7px 11px !important;
+}
+.justify-table th {
+    background: #f8fafc !important;
+}
+.justify-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 9px !important;
+    box-shadow: 0 2px 10px #007c9140;
+    margin-bottom: 1em;
+}
+.justify-table tr:nth-child(even) {
+    background: #f4fafd !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
+def df_to_justified_html(df):
+    html = df.to_html(
+        index=False,
+        classes="justify-table",
+        border=0,
+        escape=False
+    )
+    return html
 
 dimensions = [
     {
@@ -67,7 +89,6 @@ tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 R�
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Style additionnel pour le reste de la page (optionnel)
     st.markdown("""
         <style>
         div[role="button"][aria-expanded] > span {
@@ -152,7 +173,8 @@ with tab1:
                     ],
                 }
                 df = pd.DataFrame(data)
-                st.dataframe(df, use_container_width=True, hide_index=True)
+                html = df_to_justified_html(df)
+                st.markdown(html, unsafe_allow_html=True)
                 if idx < len(dimension["indicateurs"]) - 1:
                     st.markdown('<hr class="ind-separator-acc">', unsafe_allow_html=True)
 
