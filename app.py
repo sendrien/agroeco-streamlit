@@ -35,7 +35,7 @@ st.markdown(
 )
 
 # Titre de l'application
-st.title("🌱 Dashboard AGROECO (Données statiques)")
+st.title("🌱 Dashboard AGROECO (Données Statics)")
 st.markdown("**Visualisation des scores par indicateur et par dimension (exemple statique)**")
 
 # Données statiques d'exemple
@@ -54,8 +54,13 @@ data = {
 # Construction du DataFrame détaillé
 df_ind = pd.DataFrame(data)
 
-# Construction de la synthèse par dimension
-df_dim = df_ind.groupby('Dimension').mean().reset_index().set_index('Dimension')
+# Construction de la synthèse par dimension (moyenne des colonnes numériques uniquement)
+df_dim = (
+    df_ind
+    .drop(columns=['Indicateur'])
+    .groupby('Dimension', as_index=True)
+    .mean()
+)
 
 # Sélecteur de vue
 view = st.sidebar.radio(
