@@ -44,11 +44,12 @@ def get_global_scores_by_dimension(dimensions):
     return df
 
 def get_effectifs_by_categorie_and_dimension(effectifs, dimensions, categories):
-    return pd.DataFrame(
+    df = pd.DataFrame(
         effectifs,
         columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
         index=categories
     )
+    return df
 
 def show_page_resume():
     st.markdown("<h3 style='color:#027368;'>Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
