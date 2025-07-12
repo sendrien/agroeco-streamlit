@@ -25,7 +25,7 @@ html, body, .stApp {
 .justify-table th {
     background: #027368 !important;
     color: #fff;
-    font-size: 1.13em;
+    font-size: 0.8em;
 }
 .justify-table tr:nth-child(even) td {
     background: #F4F7F6 !important;
