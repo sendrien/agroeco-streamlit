@@ -287,7 +287,7 @@ def pie_poids_relatif_anim(categories, poids_relatif):
         height=500,
         showlegend=True,
         legend=dict(orientation='v', x=0.02, y=0.98, font=dict(size=12)),
-        #title_text="Poids relatif des acteurs dans le processus de transition (en %)",
+        title_text="",
         title_x=0.5,
         updatemenus=[{
             "type": "buttons",
