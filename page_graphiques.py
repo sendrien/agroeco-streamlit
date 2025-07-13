@@ -222,7 +222,7 @@ def bar_effectifs_stacked_anim(eff_df):
                 "type": "buttons",
                 "showactive": False,
                 "y": 1.25,
-                "x": -0.1,
+                "x": -1,
                 "xanchor": "left",
                 "yanchor": "top",
                 "buttons": [{
