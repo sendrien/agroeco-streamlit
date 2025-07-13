@@ -85,23 +85,26 @@ def radar_plot(radar_df, labels, categories_labels):
     )
     return fig
 
-def bar_chart_anim(radar_df, dim_labels, cat_labels):
+def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     couleurs = [
         "#3B9CCC", "#F39C12", "#13B14A", "#FFD600", "#A5A5A5"
     ]
     bar_height = 0.65
-    cat_idx = 0  # Index catégorie affichée au démarrage
 
+    # Prendre la catégorie sélectionnée
+    scores = radar_df.iloc[cat_idx].values
+
+    # Data pour la première frame (aucune barre visible)
     fig = go.Figure(
         data=[go.Bar(
-            x=radar_df.iloc[cat_idx].values,
+            x=[None]*len(scores),  # Toutes les barres invisibles au début
             y=dim_labels,
             orientation="h",
             marker=dict(
-                color=couleurs,  # On applique TOUTES les couleurs dans l'ordre pour chaque dimension
+                color=couleurs,
                 line=dict(color="#ECECEC", width=1.2)
             ),
-            text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[cat_idx].values],
+            text=[""]*len(scores),
             textposition="outside",
             insidetextanchor="end",
             hoverinfo="none",
@@ -124,44 +127,48 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
                     "label": "Dessiner",
                     "method": "animate",
                     "args": [None, {
-                        "frame": {"duration": 900, "redraw": True},
-                        "fromcurrent": True, "transition": {"duration": 350}
+                        "frame": {"duration": 500, "redraw": True},
+                        "fromcurrent": True, "transition": {"duration": 200}
                     }],
                 }]
             }]
-        ),
-        frames=[
-            go.Frame(
-                data=[go.Bar(
-                    x=radar_df.iloc[i].values,
-                    y=dim_labels,
-                    orientation="h",
-                    marker=dict(
-                        color=couleurs,  # Toujours les mêmes couleurs pour chaque dimension
-                        line=dict(color="#ECECEC", width=1.2)
-                    ),
-                    text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[i].values],
-                    textposition="outside",
-                    insidetextanchor="end",
-                    hoverinfo="none",
-                    width=[bar_height]*len(dim_labels)
-                )],
-                name=cat_labels[i],
-                layout=go.Layout(
-                    annotations=[
-                        dict(
-                            xref="paper", yref="paper",
-                            x=0.5, y=1.13, showarrow=False,
-                            xanchor="center", yanchor="bottom",
-                            text=f"<b>{cat_labels[i]}</b>",
-                            font=dict(size=22, color="#027368")
-                        )
-                    ]
-                )
-            )
-            for i in range(len(cat_labels))
-        ]
+        )
     )
+
+    # Frames : on ajoute les barres une à une
+    frames = []
+    for k in range(1, len(scores)+1):
+        frame_scores = list(scores[:k]) + [None]*(len(scores)-k)
+        frame_text = [str(v).replace('.', ',') if v is not None else '' for v in frame_scores]
+        frames.append(go.Frame(
+            data=[go.Bar(
+                x=frame_scores,
+                y=dim_labels,
+                orientation="h",
+                marker=dict(
+                    color=couleurs,
+                    line=dict(color="#ECECEC", width=1.2)
+                ),
+                text=frame_text,
+                textposition="outside",
+                insidetextanchor="end",
+                hoverinfo="none",
+                width=[bar_height]*len(dim_labels)
+            )],
+            name=str(k),
+            layout=go.Layout(
+                annotations=[
+                    dict(
+                        xref="paper", yref="paper",
+                        x=0.5, y=1.13, showarrow=False,
+                        xanchor="center", yanchor="bottom",
+                        text=f"<b>{cat_labels[cat_idx]}</b>",
+                        font=dict(size=22, color="#027368")
+                    )
+                ]
+            )
+        ))
+    fig.frames = frames
 
     # Annotation : centré au-dessus du graphique
     fig.update_layout(
