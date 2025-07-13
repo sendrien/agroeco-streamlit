@@ -105,15 +105,15 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             hoverinfo="none"
         )],
         layout=go.Layout(
-            xaxis=dict(range=[min(radar_df.min())-0.1, max(radar_df.max())+0.1], showgrid=False, color="#222"),
-            yaxis=dict(tickfont=dict(size=13), color="#222"),
-            width=450, height=290, margin=dict(l=90, r=30, t=20, b=40),
+            xaxis=dict(range=[min(radar_df.min())-0.1, max(radar_df.max())+0.1], showgrid=False, color="#222", title=""),
+            yaxis=dict(tickfont=dict(size=13), color="#222", title=""),
+            width=480, height=280, margin=dict(l=90, r=40, t=50, b=40),
             plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
-                "y": 1.13,
-                "x": 1.16,
+                "y": 1.16,
+                "x": 1.12,
                 "xanchor": "right",
                 "yanchor": "top",
                 "buttons": [{
@@ -143,8 +143,9 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
                     annotations=[
                         dict(
                             xref="paper", yref="paper",
-                            x=1.15, y=0.97, showarrow=False,
-                            text=f"<b>{cat_labels[i]}</b>", font=dict(size=17, color=couleurs[i%len(couleurs)])
+                            x=0.0, y=1.18, showarrow=False,
+                            xanchor="left", yanchor="top",
+                            text=f"<span style='font-size: 18px; font-weight: 600; color: {couleurs[i%len(couleurs)]}'>{cat_labels[i]}</span>",
                         )
                     ]
                 )
@@ -152,16 +153,20 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             for i in range(len(cat_labels))
         ]
     )
+
+    # Titre de la catégorie (au-dessus du graphique, sans chevauchement, bien lisible)
     fig.update_layout(
         annotations=[
             dict(
                 xref="paper", yref="paper",
-                x=1.15, y=0.97, showarrow=False,
-                text=f"<b>{cat_labels[cat_idx]}</b>", font=dict(size=17, color=couleurs[cat_idx%len(couleurs)])
+                x=0.0, y=1.18, showarrow=False,
+                xanchor="left", yanchor="top",
+                text=f"<span style='font-size: 18px; font-weight: 600; color: {couleurs[cat_idx%len(couleurs)]}'>{cat_labels[cat_idx]}</span>",
             )
         ]
     )
     return fig
+
 
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
