@@ -37,31 +37,29 @@ def show_page_graphiques():
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
     angles += angles[:1]
 
-    # Figure compacte mais assez large pour la légende à droite
-    fig = plt.figure(figsize=(5, 2.5))
-    ax = plt.subplot(121, polar=True)  # 1 ligne, 2 colonnes, radar à gauche
-
+    # DPI élevé + taille adaptée
+    fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True), dpi=140)
     colors = plt.cm.tab10.colors
+    linewidth = 2.5
+
     for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
-        ax.plot(angles, values, label=cat, color=color, linewidth=1.1)
+        ax.plot(angles, values, label=cat, color=color, linewidth=linewidth)
+        ax.fill(angles, values, color=color, alpha=0.09)
 
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_xticklabels(labels, fontsize=13, fontweight='bold')
     ax.set_yticks([1, 1.5, 2, 2.5, 3])
-    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=7)
+    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=11)
     ax.set_ylim(0, 3.5)
-    ax.spines['polar'].set_color('#000')
-    ax.spines['polar'].set_linewidth(1)
+    ax.grid(True, color="grey", linestyle="--", linewidth=0.7, alpha=0.7)
+    ax.spines['polar'].set_color('#027368')
+    ax.spines['polar'].set_linewidth(1.5)
 
-    # Ajout de la légende à droite
-    plt.subplot(122)
-    plt.axis('off')
-    handles, labels_legend = ax.get_legend_handles_labels()
-    plt.legend(handles, labels_legend, loc='center left', fontsize=7, frameon=False)
-
-    plt.tight_layout(pad=0.4)
+    # Légende en dehors du radar
+    ax.legend(loc='center left', bbox_to_anchor=(1.05, 0.5), fontsize=10, frameon=False)
+    plt.tight_layout(pad=2.2)
     st.pyplot(fig)
 
 if __name__ == "__main__" or "streamlit" in __name__:
