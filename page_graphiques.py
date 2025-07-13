@@ -72,7 +72,7 @@ def radar_plot(radar_df, labels, categories_labels):
             "type": "buttons",
             "showactive": False,
             "y": 1.13,
-            "x": 1,
+            "x": 0,
             "xanchor": "left",
             "yanchor": "top",
             "buttons": [{
