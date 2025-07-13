@@ -72,7 +72,7 @@ def radar_plot(radar_df, labels, categories_labels):
             "type": "buttons",
             "showactive": False,
             "y": 1.13,
-            "x": 1,
+            "x": 0.8,
             "xanchor": "left",
             "yanchor": "top",
             "buttons": [{
@@ -119,7 +119,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 "type": "buttons",
                 "showactive": False,
                 "y": 1.16,
-                "x": 0.79,
+                "x": 0.8,
                 "xanchor": "left",
                 "yanchor": "top",
                 "buttons": [{
@@ -132,8 +132,6 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 }],
                 "bgcolor": "#fff",
                 "bordercolor": "#027368",
-                "borderwidth": 4.8,
-                "font": {"color": "whitesmoke", "size": 15}
             }]
         )
     )
