@@ -32,29 +32,28 @@ def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
 
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
-
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
     N = len(labels)
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
-    angles += angles[:1]  # fermer le polygone
+    angles += angles[:1]
 
-    fig, ax = plt.subplots(figsize=(4.2, 4.2), subplot_kw=dict(polar=True))  # <<< Taille réduite
+    fig, ax = plt.subplots(figsize=(2.4, 2.4), subplot_kw=dict(polar=True))  # <<< Taille très réduite
 
     colors = plt.cm.tab10.colors
     for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
-        ax.plot(angles, values, label=cat, color=color, linewidth=2)
-        # pas de ax.fill !
+        ax.plot(angles, values, label=cat, color=color, linewidth=1.2)
 
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels, fontsize=11)
+    ax.set_xticklabels(labels, fontsize=8)
     ax.set_yticks([1, 1.5, 2, 2.5, 3])
-    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=10)
+    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=7)
     ax.set_ylim(0, 3.5)
-    plt.title("Note globale des dimensions par catégories d'acteurs", size=13, y=1.08, weight="bold")
-    ax.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=9, frameon=False)
+
+    plt.title("Note globale des dimensions\npar catégories d'acteurs", size=10, y=1.12, weight="bold")
+    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), fontsize=7, frameon=False, handlelength=1.2)
 
     st.pyplot(fig)
 
