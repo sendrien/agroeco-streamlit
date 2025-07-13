@@ -118,8 +118,8 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
     "type": "buttons",
     "showactive": False,
     "y": 1.13,
-    "x": 0,
-    "xanchor": "left",
+    "x": 1.08,
+    "xanchor": "right",
     "yanchor": "top",
     "buttons": [{
         "label": "Animer",
