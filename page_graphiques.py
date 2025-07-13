@@ -21,10 +21,8 @@ def get_palette(n):
 def get_paletteeffectif(n):
     from plotly.colors import qualitative
     base = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
-    if n <= len(base):
-        return base[:n]
-    import random
-    return ['#'+''.join(random.choices('0123456789ABCDEF', k=6)) for _ in range(n)]
+    return base[:n] if n <= len(base) else base + [f'#{np.random.randint(0,0xFFFFFF):06X}' for _ in range(n)]
+
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
@@ -186,6 +184,8 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     return fig
 
 
+
+
 def get_effectifs_df(effectifs, dimensions, categories):
     return pd.DataFrame(
         effectifs,
@@ -193,38 +193,77 @@ def get_effectifs_df(effectifs, dimensions, categories):
         index=categories
     )
 
-def bar_effectifs_stacked(eff_df):
-    dim_labels = eff_df.columns.tolist()
-    cat_labels = eff_df.index.tolist()
-    palette = get_palette(len(dim_labels))
+def bar_effectifs_stacked_anim(eff_df):
+    dims = eff_df.columns.tolist()
+    cats = eff_df.index.tolist()
+    palette = get_paletteeffectif(len(dims))
 
-    fig = go.Figure()
-    cumulated = np.zeros(len(cat_labels))
-
-    for i, dim in enumerate(dim_labels):
-        vals = eff_df[dim].values
-        fig.add_trace(go.Bar(
-            y=cat_labels,
-            x=vals,
-            name=dim,
-            orientation='h',
-            marker=dict(color=palette[i]),
-            text=vals,
-            textposition='inside',
-            insidetextanchor='middle'
-        ))
-        cumulated += vals
-
-    fig.update_layout(
-        barmode='stack',
-        height=480,
-        margin=dict(l=160, r=40, t=50, b=40),
-        xaxis=dict(title='Nombre de répondants', dtick=50),
-        yaxis=dict(autorange='reversed'),
-        legend=dict(orientation='h', y=-0.15)
+    # Base figure avec zéro valeurs
+    fig = go.Figure(
+        data=[
+            go.Bar(
+                y=cats,
+                x=[0] * len(cats),
+                name=dims[i],
+                orientation='h',
+                marker_color=palette[i],
+                text=[''] * len(cats),
+                textposition='inside'
+            ) for i in range(len(dims))
+        ],
+        layout=go.Layout(
+            barmode='stack',
+            height=480,
+            margin=dict(l=160, r=40, t=60, b=40),
+            xaxis=dict(title='Nombre de répondants', dtick=50, range=[0, eff_df.values.sum(axis=1).max() * 1.05]),
+            yaxis=dict(autorange='reversed'),
+            legend=dict(orientation='h', y=-0.15),
+            updatemenus=[{
+                "type": "buttons",
+                "showactive": False,
+                "y": 1.12, "x": 0,
+                "xanchor": "left", "yanchor": "top",
+                "buttons": [{
+                    "label": "Dessiner",
+                    "method": "animate",
+                    "args": [None, {
+                        "frame": {"duration": 500, "redraw": True},
+                        "fromcurrent": True,
+                        "transition": {"duration": 300}
+                    }]
+                }],
+                "bgcolor": "#fff",
+                "bordercolor": "#027368",
+                "borderwidth": 1.5,
+                "font": {"color": "#027368", "size": 14}
+            }]
+        )
     )
 
+    # Génération des frames une dimension à la fois
+    frames = []
+    for k in range(1, len(dims) + 1):
+        frame_data = []
+        for i in range(len(dims)):
+            vals = eff_df.iloc[:, i].values if i < k else [0] * len(cats)
+            frame_data.append(go.Bar(
+                y=cats,
+                x=vals,
+                name=dims[i],
+                orientation='h',
+                marker_color=palette[i],
+                text=[str(v) for v in vals],
+                textposition='inside'
+            ))
+        frames.append(go.Frame(data=frame_data, name=str(k)))
+
+    fig.frames = frames
     return fig
+
+
+
+
+
 
 
 def show_page_graphiques():
@@ -264,9 +303,8 @@ def show_page_graphiques():
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Nombre de répondants par dimension par catégories d’acteurs</h3>", unsafe_allow_html=True)
 
     eff_df = get_effectifs_df(effectifs, dimensions, categories)
-    eff_fig = bar_effectifs_stacked(eff_df)
+    eff_fig = bar_effectifs_stacked_anim(eff_df)
 
-    # Configuration simplifiée pour éviter erreurs JSON
     config = {
         'displayModeBar': True,
         'displaylogo': False,
