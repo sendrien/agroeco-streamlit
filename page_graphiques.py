@@ -125,13 +125,17 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 "buttons": [{
                     "label": "Dessiner",
                     "method": "animate",
-                    "color": "blue",
                     "args": [None, {
-                        "frame": {"duration": 600, "redraw": True},
+                        "frame": {"duration": 500, "redraw": True},
                         "fromcurrent": True, "transition": {"duration": 200}
                     }],
-                }]
+                }],
+                "bgcolor": "#fff",             # Couleur de fond du bouton
+                "bordercolor": "#027368",      # Couleur de la bordure du bouton
+                "borderwidth": 1.8,            # Largeur de la bordure
+                "font": {"color": "blue", "size": 15}  # Couleur du texte
             }]
+
         )
     )
 
