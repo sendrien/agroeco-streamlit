@@ -190,7 +190,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
 def bar_chart_effectifs(effectifs_df):
     dim_labels = effectifs_df.columns.tolist()
     cat_labels = effectifs_df.index.tolist()
-    palette = get_palette(len(dim_labels))
+    palette = get_paletteeffectif(len(dim_labels))
     fig = go.Figure(
         data=[go.Bar(x=[None]*len(dim_labels),
                      y=dim_labels,
