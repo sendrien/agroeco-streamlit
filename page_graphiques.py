@@ -243,6 +243,7 @@ def show_page_graphiques():
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
+    cat_labels = radar_df.index.tolist()
 
     categorie_a_supprimer = "Petits exploitants agricoles familiaux"
     if categorie_a_supprimer in radar_df.index:
@@ -277,7 +278,7 @@ def show_page_graphiques():
       "<h3 style='color:#027368;margin-top:2em;'>Nombre de répondants par dimension (par catégorie)</h3>",
       unsafe_allow_html=True
     )
-    eff_fig = bar_effectifs_anim(eff_df, labels, labels, cat_idx=0)
+    eff_fig = bar_effectifs_anim(eff_df, labels, cat_labels, cat_idx=0)
     config = { 'displayModeBar': True, 'displaylogo': False,
                'modeBarButtonsToRemove': [...], 'modeBarButtonsToAdd': ['toImage','fullscreen'] }
     st.plotly_chart(eff_fig, use_container_width=True, config=config)
