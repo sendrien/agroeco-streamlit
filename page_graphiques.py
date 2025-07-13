@@ -257,27 +257,55 @@ def bar_effectifs_stacked_anim(eff_df):
     fig.frames = frames
     return fig
 
-def pie_poids_relatif(categories, poids_relatif):
-    fig = go.Figure(go.Pie(
-        labels=categories,
-        values=poids_relatif,
-        textinfo='label+percent',
-        textposition='outside',
-        insidetextorientation='radial',
-        hole=0,
-        marker=dict(line=dict(color='#fff', width=1)),
-        sort=False  # conserve l’ordre d'origine
-    ))
+
+def pie_poids_relatif_anim(categories, poids_relatif):
+    labels = categories
+    values = poids_relatif
+    palette = get_palette(len(labels))
+
+    fig = go.Figure(
+        data=[go.Pie(
+            labels=labels,
+            values=[0]*len(values),  # on démarre à 0
+            textinfo='label+percent',
+            textposition='outside',
+            marker=dict(colors=palette, line=dict(color='#fff', width=1)),
+            sort=False
+        )]
+    )
+
+    frames = []
+    cumulative = [0]*len(values)
+    for i in range(len(values)):
+        cumulative[i] = values[i]
+        frames.append(go.Frame(data=[go.Pie(values=cumulative)]))
+
+    fig.frames = frames
+
     fig.update_layout(
         margin=dict(l=20, r=20, t=40, b=20),
         height=500,
         showlegend=True,
         legend=dict(orientation='v', x=0.02, y=0.98, font=dict(size=12)),
         title_text="Poids relatif des acteurs dans le processus de transition (en %)",
-        title_x=0.5
+        title_x=0.5,
+        updatemenus=[{
+            "type": "buttons",
+            "showactive": False,
+            "x": 0.0, "y": 1.1,
+            "xanchor": "left", "yanchor": "top",
+            "buttons": [{
+                "label": "Dessiner",
+                "method": "animate",
+                "args": [None, {"frame": {"duration": 400, "redraw": True},
+                                "fromcurrent": True, "transition": {"duration": 200}}]
+            }],
+            "font": {"size": 14, "color": "#027368"},
+            "bgcolor": "#fff", "bordercolor": "#027368", "borderwidth": 1.5
+        }]
     )
-    return fig
 
+    return fig
 
 
 
@@ -325,8 +353,9 @@ def show_page_graphiques():
 
 
     # Camembert du poids relatif
-    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs dans le processus de transition (en %)</h3>", unsafe_allow_html=True)
-    pie_fig = pie_poids_relatif(categories, poids_relatif)
+    # Camembert animé du poids relatif
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs (en %)</h3>", unsafe_allow_html=True)
+    pie_fig = pie_poids_relatif_anim(categories, poids_relatif)
     st.plotly_chart(pie_fig, use_container_width=True, config={'displayModeBar': False})
 
 if __name__ == "__main__" or "streamlit" in __name__:
