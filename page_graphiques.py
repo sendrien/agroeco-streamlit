@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from data_osae import dimensions, categories  # ou l'import centralisé
+from data_osae import dimensions, categories
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
@@ -38,13 +38,13 @@ def show_page_graphiques():
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
     angles += angles[:1]
 
-    fig, ax = plt.subplots(figsize=(2.4, 2.4), subplot_kw=dict(polar=True))  # <<< Taille très réduite
+    fig, ax = plt.subplots(figsize=(2.8, 2.8), subplot_kw=dict(polar=True))  # Taille réduite
 
     colors = plt.cm.tab10.colors
     for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
-        ax.plot(angles, values, label=cat, color=color, linewidth=1.2)
+        ax.plot(angles, values, label=cat, color=color, linewidth=1.3)
 
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(labels, fontsize=8)
@@ -52,11 +52,12 @@ def show_page_graphiques():
     ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=7)
     ax.set_ylim(0, 3.5)
 
-    plt.title("Note globale des dimensions\npar catégories d'acteurs", size=10, y=1.12, weight="bold")
-    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), fontsize=7, frameon=False, handlelength=1.2)
+    # Pas de titre sur le graphique
+    # Légende compacte en bas du graphique
+    ax.legend(loc='lower center', bbox_to_anchor=(0.5, -0.20), fontsize=7, frameon=False, ncol=1)
 
     st.pyplot(fig)
 
-
+# Utilisation dans la page
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
