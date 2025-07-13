@@ -4,6 +4,20 @@ import numpy as np
 import plotly.graph_objects as go
 from data_osae import dimensions, categories
 
+# GÉNÉRATION DYNAMIQUE D'UNE PALETTE DE COULEURS (exemple : Plotly, Matplotlib, ou personnalisée)
+def get_palette(n):
+    """Retourne une palette de n couleurs distinctes, ici en s'appuyant sur Plotly."""
+    from plotly.colors import qualitative
+    base_palette = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
+    # Si trop court, génère aléatoirement :
+    if n <= len(base_palette):
+        return base_palette[:n]
+    else:
+        # Génère des couleurs random si n > palette
+        import random
+        def random_color(): return '#'+''.join(random.choices('0123456789ABCDEF', k=6))
+        return [random_color() for _ in range(n)]
+
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
     for i, cat in enumerate(categories):
@@ -15,10 +29,7 @@ def get_dimension_scores_per_categorie(dimensions, categories):
                     v = indic["scores"][i]
                     if v is not None:
                         scores.append(v)
-            if scores:
-                mean_score = round(sum(scores) / len(scores), 2)
-            else:
-                mean_score = None
+            mean_score = round(sum(scores) / len(scores), 2) if scores else None
             cat_scores.append(mean_score)
         data.append(cat_scores)
     df = pd.DataFrame(
@@ -29,6 +40,7 @@ def get_dimension_scores_per_categorie(dimensions, categories):
     return df
 
 def radar_plot(radar_df, labels, categories_labels):
+    palette = get_palette(len(categories_labels))
     fig = go.Figure()
     for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
@@ -38,10 +50,10 @@ def radar_plot(radar_df, labels, categories_labels):
             theta=labels + [labels[0]],
             mode='lines+markers',
             name=cat,
-            line=dict(width=3),
+            line=dict(width=3, color=palette[idx]),
+            marker=dict(size=5, color=palette[idx]),
             opacity=0.85,
-            marker=dict(size=5),
-            visible=False if idx > 0 else True  # Premier visible au début
+            visible=False if idx > 0 else True
         ))
     frames = [
         go.Frame(
@@ -50,8 +62,8 @@ def radar_plot(radar_df, labels, categories_labels):
                 theta=labels + [labels[0]],
                 mode='lines+markers',
                 name=categories_labels[j],
-                line=dict(width=3),
-                marker=dict(size=5),
+                line=dict(width=3, color=palette[j]),
+                marker=dict(size=5, color=palette[j]),
                 opacity=0.85,
                 visible=True if j <= i else False
             ) for j in range(len(categories_labels))]
@@ -90,12 +102,9 @@ def radar_plot(radar_df, labels, categories_labels):
     return fig
 
 def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
-    couleurs = [
-        "#3B9CCC", "#F39C12", "#13B14A", "#FFD600", "#A5A5A5"
-    ]
+    bar_palette = get_palette(len(dim_labels))
     bar_height = 0.65
 
-    # Prendre la catégorie sélectionnée (cat_idx)
     scores = radar_df.iloc[cat_idx].values
 
     fig = go.Figure(
@@ -104,7 +113,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
             y=dim_labels,
             orientation="h",
             marker=dict(
-                color=couleurs,
+                color=bar_palette,
                 line=dict(color="#ECECEC", width=1.2)
             ),
             text=[""]*len(scores),
@@ -142,7 +151,6 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
         )
     )
 
-    # Frames : on ajoute les barres une à une
     frames = []
     for k in range(1, len(scores)+1):
         frame_scores = list(scores[:k]) + [None]*(len(scores)-k)
@@ -153,7 +161,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 y=dim_labels,
                 orientation="h",
                 marker=dict(
-                    color=couleurs,
+                    color=bar_palette,
                     line=dict(color="#ECECEC", width=1.2)
                 ),
                 text=frame_text,
@@ -165,7 +173,6 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
         ))
     fig.frames = frames
 
-    # PAS d’annotation titre de catégorie au-dessus !
     fig.update_layout(annotations=[])
     return fig
 
@@ -175,13 +182,11 @@ def show_page_graphiques():
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
 
-    # === Supprimer "Petits exploitants agricoles familiaux" ===
     categorie_a_supprimer = "Petits exploitants agricoles familiaux"
     if categorie_a_supprimer in radar_df.index:
         radar_df = radar_df.drop(categorie_a_supprimer)
         categories_labels = [cat for cat in categories_labels if cat != categorie_a_supprimer]
 
-    # Config bar d'outils Plotly : supprime tous les boutons inutiles
     config = {
         'displayModeBar': True,
         'displaylogo': False,
@@ -197,11 +202,9 @@ def show_page_graphiques():
         'modeBarButtonsToAdd': ['toImage', 'fullscreen'],
     }
 
-    # 1. RADAR PLOT ANIMÉ (garde toutes les catégories, ou adapte si besoin)
     radar_fig = radar_plot(radar_df, labels, categories_labels)
     st.plotly_chart(radar_fig, use_container_width=True, config=config)
 
-    # 2. BAR CHART ANIMÉ (par défaut sur la première catégorie restante, SANS titre)
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     bar_fig = bar_chart_anim(radar_df, labels, categories_labels, cat_idx=0)
     st.plotly_chart(bar_fig, use_container_width=True, config=config)
