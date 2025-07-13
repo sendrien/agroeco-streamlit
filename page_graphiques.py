@@ -186,46 +186,57 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     return fig
 
 
-# Bar chart animé des effectifs
-def bar_chart_effectifs(effectifs_df):
-    dim_labels = effectifs_df.columns.tolist()
-    cat_labels = effectifs_df.index.tolist()
-    palette = get_paletteeffectif(len(dim_labels))
+def get_effectifs_df(effectifs, dimensions, categories):
+    # transforme la liste effectifs (matrice) en DataFrame
+    return pd.DataFrame(
+        effectifs,
+        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
+        index=categories
+    )
+
+def bar_effectifs_anim(eff_df, dim_labels, cat_labels, cat_idx=0):
+    palette = get_palette(len(dim_labels))
+    bar_height = 0.65
+    counts = eff_df.iloc[cat_idx].values
+
     fig = go.Figure(
-        data=[go.Bar(x=[None]*len(dim_labels),
-                     y=dim_labels,
-                     orientation='h',
-                     marker=dict(color=palette, line=dict(color="#EEE", width=1.2)),
-                     text=['']*len(dim_labels),
-                     textposition='outside',
-                     hoverinfo='none')]
-    )
-    frames = []
-    for k in range(1, len(dim_labels)+1):
-        xs = list(effectifs_df.iloc[0][:k]) + [None]*(len(dim_labels)-k)
-        texts = [str(v) for v in xs]
-        frames.append(go.Frame(data=[go.Bar(x=xs, y=dim_labels,
-                                            orientation='h',
-                                            marker=dict(color=palette, line=dict(color="#EEE", width=1.2)),
-                                            text=texts,
-                                            textposition='outside')]))
-    fig.frames = frames
-    fig.update_layout(
-        xaxis=dict(range=[0, effectifs_df.values.max()*1.1], gridcolor="#eee"),
-        yaxis=dict(tickfont=dict(size=15)),
-        plot_bgcolor="#fff", paper_bgcolor="#fff",
-        height=400,
-        updatemenus=[{
-            'type':'buttons','showactive':False,
-            'buttons':[{
-                'label':'Dessiner',
-                'method':'animate',
-                'args':[None, {'frame':{'duration':600,'redraw':True},
-                              'transition':{'duration':200}}]
+        data=[go.Bar(
+            x=[None]*len(counts), y=dim_labels,
+            orientation="h",
+            marker=dict(color=palette, line=dict(color="#ECECEC", width=1.2)),
+            text=[""]*len(counts), textposition="outside",
+            hoverinfo="none", width=[bar_height]*len(dim_labels)
+        )],
+        layout=go.Layout(
+            xaxis=dict(range=[0, counts.max()*1.1], showgrid=True, gridcolor="#eee"),
+            yaxis=dict(tickfont=dict(size=18)), height=410,
+            margin=dict(l=110, r=60, t=40, b=60),
+            plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
+            updatemenus=[{
+                "type": "buttons", "showactive": False,
+                "y": 1.2, "x": -0.08, "xanchor": "left", "yanchor": "top",
+                "buttons":[{"label":"Dessiner","method":"animate",
+                            "args":[None, {"frame":{"duration":300,"redraw":True},"transition":{"duration":200}}]}],
+                "bgcolor":"#fff","bordercolor":"#027368","borderwidth":1.8,
+                "font":{"color":"#027368","size":15}
             }]
-        }]
+        )
     )
+
+    frames = []
+    for k in range(1, len(counts)+1):
+        frame_vals = list(counts[:k]) + [None]*(len(counts)-k)
+        frame_text = [str(v) for v in frame_vals]
+        frames.append(go.Frame(data=[go.Bar(
+            x=frame_vals, y=dim_labels, orientation="h",
+            marker=fig.data[0].marker, text=frame_text,
+            textposition="outside", hoverinfo="none", width=[bar_height]*len(dim_labels)
+        )]))
+
+    fig.frames = frames
+    fig.update_layout(annotations=[])
     return fig
+
 
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
@@ -260,10 +271,16 @@ def show_page_graphiques():
     bar_fig = bar_chart_anim(radar_df, labels, categories_labels, cat_idx=0)
     st.plotly_chart(bar_fig, use_container_width=True, config=config)
 
-    # Ajout du graphique effectifs
-    eff_df = pd.DataFrame(effectifs, columns=labels, index=categories)
-    st.markdown("### Nombre de répondants par dimension")
-    st.plotly_chart(bar_chart_effectifs(eff_df), use_container_width=True, config=config)
+    # --- Nouveau graphique effectifs ---
+    eff_df = get_effectifs_df(effectifs, dimensions, categories)
+    st.markdown(
+      "<h3 style='color:#027368;margin-top:2em;'>Nombre de répondants par dimension (par catégorie)</h3>",
+      unsafe_allow_html=True
+    )
+    eff_fig = bar_effectifs_anim(eff_df, labels, labels, cat_idx=0)
+    config = { 'displayModeBar': True, 'displaylogo': False,
+               'modeBarButtonsToRemove': [...], 'modeBarButtonsToAdd': ['toImage','fullscreen'] }
+    st.plotly_chart(eff_fig, use_container_width=True, config=config)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
