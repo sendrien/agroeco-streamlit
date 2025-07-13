@@ -305,12 +305,7 @@ def show_page_graphiques():
     eff_df = get_effectifs_df(effectifs, dimensions, categories)
     eff_fig = bar_effectifs_stacked_anim(eff_df)
 
-    config = {
-        'displayModeBar': True,
-        'displaylogo': False,
-        'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'select2d', 'lasso2d'],
-        'modeBarButtonsToAdd': ['toImage']
-    }
+    
 
     st.plotly_chart(eff_fig, use_container_width=True, config=config)
 
