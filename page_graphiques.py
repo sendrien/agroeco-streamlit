@@ -118,7 +118,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
-                "y": 0.13,
+                "y": 1.15,
                 "x": 0.5,
                 "xanchor": "left",
                 "yanchor": "top",
