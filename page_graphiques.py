@@ -93,7 +93,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
     ]
     cat_idx = 0
     scores = radar_df.iloc[cat_idx].values
-    bar_height = 0.65  # Largeur des barres pour plus de lisibilité
+    bar_height = 0.65
 
     fig = go.Figure(
         data=[go.Bar(
@@ -108,15 +108,17 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             width=[bar_height]*len(dim_labels)
         )],
         layout=go.Layout(
-            xaxis=dict(range=[0, 3.2], showgrid=True, gridcolor="#eee", dtick=0.5),
-            yaxis=dict(tickfont=dict(size=15), color="#222"),
-            width=580, height=330, margin=dict(l=100, r=50, t=55, b=40),
+            xaxis=dict(range=[0, 3.2], showgrid=True, gridcolor="#eee", dtick=0.5, tickfont=dict(size=15)),
+            yaxis=dict(tickfont=dict(size=18), color="#222"),
+            # width=1100,  # Enlève width pour laisser Streamlit gérer, ou adapte si tu veux une largeur fixe
+            height=410,
+            margin=dict(l=110, r=60, t=60, b=60),
             plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
                 "y": 1.13,
-                "x": 1.13,
+                "x": 1.08,
                 "xanchor": "right",
                 "yanchor": "top",
                 "buttons": [{
@@ -148,33 +150,31 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
         ]
     )
 
-    # Afficher le titre DANS le plot, bien placé au-dessus de la première barre
+    # Annotation : centré au-dessus du graphique
     fig.update_layout(
         annotations=[
             dict(
-                xref="paper", yref="y",
-                x=0.02, y=dim_labels[0], showarrow=False,
-                xanchor="left", yanchor="bottom",
+                xref="paper", yref="paper",
+                x=0.5, y=1.13, showarrow=False,
+                xanchor="center", yanchor="bottom",
                 text=f"<b>{cat_labels[cat_idx]}</b>",
-                font=dict(size=20, color="#027368")
+                font=dict(size=22, color="#027368")
             )
         ]
     )
-
-    # On met à jour l'annotation à chaque frame de l'animation
+    # Mettre à jour pour chaque animation (pour que le titre suive)
     for idx, frame in enumerate(fig.frames):
         frame.layout = go.Layout(
             annotations=[
                 dict(
-                    xref="paper", yref="y",
-                    x=0.02, y=dim_labels[0], showarrow=False,
-                    xanchor="left", yanchor="bottom",
+                    xref="paper", yref="paper",
+                    x=0.5, y=1.13, showarrow=False,
+                    xanchor="center", yanchor="bottom",
                     text=f"<b>{cat_labels[idx]}</b>",
-                    font=dict(size=20, color="#027368")
+                    font=dict(size=22, color="#027368")
                 )
             ]
         )
-
     return fig
 
 
