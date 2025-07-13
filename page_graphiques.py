@@ -28,15 +28,9 @@ def get_dimension_scores_per_categorie(dimensions, categories):
     )
     return df
 
-def show_page_graphiques():
-    st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
-    radar_df = get_dimension_scores_per_categorie(dimensions, categories)
-    labels = radar_df.columns.tolist()
-    categories_labels = radar_df.index.tolist()
-
+def radar_plot(radar_df, labels, categories_labels):
     fig = go.Figure()
 
-    # Animation : chaque trace apparaît progressivement
     for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
@@ -51,7 +45,6 @@ def show_page_graphiques():
             visible=False if idx > 0 else True  # Premier visible au début
         ))
 
-    # Images/frames pour animation
     frames = [
         go.Frame(
             data=[go.Scatterpolar(
@@ -67,7 +60,6 @@ def show_page_graphiques():
         )
         for i in range(len(categories_labels))
     ]
-
     fig.frames = frames
 
     fig.update_layout(
@@ -89,12 +81,102 @@ def show_page_graphiques():
                 "label": "Animer",
                 "method": "animate",
                 "args": [None, {"frame": {"duration": 600, "redraw": True},
-                                "fromcurrent": True, "transition": {"duration": 200}}],
+                                "fromcurrent": True, "transition": {"duration": 200}}]
             }]
         }]
     )
+    return fig
 
-    st.plotly_chart(fig, use_container_width=True)
+def bar_chart_anim(radar_df, dim_labels, cat_labels):
+    couleurs = [
+        "#3B9CCC", "#F39C12", "#13B14A", "#FFD600", "#A5A5A5", "#2980B9", "#DE3163"
+    ]
+    cat_idx = 0
+    scores = radar_df.iloc[cat_idx].values
+    fig = go.Figure(
+        data=[go.Bar(
+            x=scores,
+            y=dim_labels,
+            orientation="h",
+            marker=dict(color=couleurs[:len(dim_labels)], line=dict(color="#ECECEC", width=1.2)),
+            text=[str(v).replace('.', ',') if v is not None else '' for v in scores],
+            textposition="outside",
+            insidetextanchor="end",
+            hoverinfo="none"
+        )],
+        layout=go.Layout(
+            xaxis=dict(range=[min(radar_df.min())-0.1, max(radar_df.max())+0.1], showgrid=False, color="#222"),
+            yaxis=dict(tickfont=dict(size=13), color="#222"),
+            width=450, height=290, margin=dict(l=90, r=30, t=20, b=40),
+            plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
+            updatemenus=[{
+                "type": "buttons",
+                "showactive": False,
+                "y": 1.13,
+                "x": 1.16,
+                "xanchor": "right",
+                "yanchor": "top",
+                "buttons": [{
+                    "label": "Animer",
+                    "method": "animate",
+                    "args": [None, {
+                        "frame": {"duration": 900, "redraw": True},
+                        "fromcurrent": True, "transition": {"duration": 350}
+                    }],
+                }]
+            }]
+        ),
+        frames=[
+            go.Frame(
+                data=[go.Bar(
+                    x=radar_df.iloc[i].values,
+                    y=dim_labels,
+                    orientation="h",
+                    marker=dict(color=couleurs[:len(dim_labels)], line=dict(color="#ECECEC", width=1.2)),
+                    text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[i].values],
+                    textposition="outside",
+                    insidetextanchor="end",
+                    hoverinfo="none"
+                )],
+                name=cat_labels[i],
+                layout=go.Layout(
+                    annotations=[
+                        dict(
+                            xref="paper", yref="paper",
+                            x=1.15, y=0.97, showarrow=False,
+                            text=f"<b>{cat_labels[i]}</b>", font=dict(size=17, color=couleurs[i%len(couleurs)])
+                        )
+                    ]
+                )
+            )
+            for i in range(len(cat_labels))
+        ]
+    )
+    fig.update_layout(
+        annotations=[
+            dict(
+                xref="paper", yref="paper",
+                x=1.15, y=0.97, showarrow=False,
+                text=f"<b>{cat_labels[cat_idx]}</b>", font=dict(size=17, color=couleurs[cat_idx%len(couleurs)])
+            )
+        ]
+    )
+    return fig
+
+def show_page_graphiques():
+    st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
+    radar_df = get_dimension_scores_per_categorie(dimensions, categories)
+    labels = radar_df.columns.tolist()
+    categories_labels = radar_df.index.tolist()
+
+    # 1. RADAR PLOT ANIMÉ
+    radar_fig = radar_plot(radar_df, labels, categories_labels)
+    st.plotly_chart(radar_fig, use_container_width=True)
+
+    # 2. BAR CHART ANIMÉ
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
+    bar_fig = bar_chart_anim(radar_df, labels, categories_labels)
+    st.plotly_chart(bar_fig, use_container_width=False)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
