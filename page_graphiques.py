@@ -221,22 +221,21 @@ def bar_effectifs_stacked_anim(eff_df):
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
-                "y": 1.13,
-                "x": -0.5,
-                "xanchor": "left",
-                "yanchor": "top",
+                "y": 1.13, "x": -1,
+                "xanchor": "left", "yanchor": "top",
                 "buttons": [{
                     "label": "Dessiner",
                     "method": "animate",
                     "args": [None, {
-                        "frame": {"duration": 600, "redraw": True},
-                        "fromcurrent": True, "transition": {"duration": 200}
-                    }],
+                        "frame": {"duration": 500, "redraw": True},
+                        "fromcurrent": True,
+                        "transition": {"duration": 300}
+                    }]
                 }],
                 "bgcolor": "#fff",
                 "bordercolor": "#027368",
-                "borderwidth": 1.8,
-                "font": {"color": "#027368", "size": 15}
+                "borderwidth": 1.5,
+                "font": {"color": "#027368", "size": 14}
             }]
         )
     )
