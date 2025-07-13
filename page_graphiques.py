@@ -91,13 +91,12 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     ]
     bar_height = 0.65
 
-    # Prendre la catégorie sélectionnée
+    # Prendre la catégorie sélectionnée (cat_idx)
     scores = radar_df.iloc[cat_idx].values
 
-    # Data pour la première frame (aucune barre visible)
     fig = go.Figure(
         data=[go.Bar(
-            x=[None]*len(scores),  # Toutes les barres invisibles au début
+            x=[None]*len(scores),
             y=dim_labels,
             orientation="h",
             marker=dict(
@@ -154,42 +153,25 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 insidetextanchor="end",
                 hoverinfo="none",
                 width=[bar_height]*len(dim_labels)
-            )],
-            name=str(k),
-            layout=go.Layout(
-                annotations=[
-                    dict(
-                        xref="paper", yref="paper",
-                        x=0.5, y=1.13, showarrow=False,
-                        xanchor="center", yanchor="bottom",
-                        text=f"<b>{cat_labels[cat_idx]}</b>",
-                        font=dict(size=22, color="#027368")
-                    )
-                ]
-            )
+            )]
         ))
     fig.frames = frames
 
-    # Annotation : centré au-dessus du graphique
-    fig.update_layout(
-        annotations=[
-            dict(
-                xref="paper", yref="paper",
-                x=0.5, y=1.13, showarrow=False,
-                xanchor="center", yanchor="bottom",
-                text=f"<b>{cat_labels[cat_idx]}</b>",
-                font=dict(size=22, color="#027368")
-            )
-        ]
-    )
+    # PAS d’annotation titre de catégorie au-dessus !
+    fig.update_layout(annotations=[])
     return fig
-
 
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
+
+    # === Supprimer "Petits exploitants agricoles familiaux" ===
+    categorie_a_supprimer = "Petits exploitants agricoles familiaux"
+    if categorie_a_supprimer in radar_df.index:
+        radar_df = radar_df.drop(categorie_a_supprimer)
+        categories_labels = [cat for cat in categories_labels if cat != categorie_a_supprimer]
 
     # Config bar d'outils Plotly : supprime tous les boutons inutiles
     config = {
@@ -207,13 +189,13 @@ def show_page_graphiques():
         'modeBarButtonsToAdd': ['toImage', 'fullscreen'],
     }
 
-    # 1. RADAR PLOT ANIMÉ
+    # 1. RADAR PLOT ANIMÉ (garde toutes les catégories, ou adapte si besoin)
     radar_fig = radar_plot(radar_df, labels, categories_labels)
     st.plotly_chart(radar_fig, use_container_width=True, config=config)
 
-    # 2. BAR CHART ANIMÉ
+    # 2. BAR CHART ANIMÉ (par défaut sur la première catégorie restante, SANS titre)
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
-    bar_fig = bar_chart_anim(radar_df, labels, categories_labels)
+    bar_fig = bar_chart_anim(radar_df, labels, categories_labels, cat_idx=0)
     st.plotly_chart(bar_fig, use_container_width=True, config=config)
 
 if __name__ == "__main__" or "streamlit" in __name__:
