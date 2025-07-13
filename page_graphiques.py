@@ -2,213 +2,102 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-from data_osae import dimensions, categories
+from data_osae import dimensions, categories, effectifs  # ← ajoute effectifs
 
-# GÉNÉRATION DYNAMIQUE D'UNE PALETTE DE COULEURS (exemple : Plotly, Matplotlib, ou personnalisée)
+# Génération palette
 def get_palette(n):
-    """Retourne une palette de n couleurs distinctes, ici en s'appuyant sur Plotly."""
     from plotly.colors import qualitative
-    base_palette = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
-    # Si trop court, génère aléatoirement :
-    if n <= len(base_palette):
-        return base_palette[:n]
-    else:
-        # Génère des couleurs random si n > palette
-        import random
-        def random_color(): return '#'+''.join(random.choices('0123456789ABCDEF', k=6))
-        return [random_color() for _ in range(n)]
+    base = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
+    if n <= len(base):
+        return base[:n]
+    import random
+    return ['#' + ''.join(random.choices('0123456789ABCDEF', k=6)) for _ in range(n)]
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
     for i, cat in enumerate(categories):
         cat_scores = []
         for dim in dimensions:
-            scores = []
-            for indic in dim["indicateurs"]:
-                if i < len(indic["scores"]):
-                    v = indic["scores"][i]
-                    if v is not None:
-                        scores.append(v)
-            mean_score = round(sum(scores) / len(scores), 2) if scores else None
-            cat_scores.append(mean_score)
+            vals = [v for indic in dim["indicateurs"] 
+                    for v in ([indic["scores"][i]] if i < len(indic["scores"]) else [None]) 
+                    if v is not None]
+            cat_scores.append(round(sum(vals)/len(vals),2) if vals else None)
         data.append(cat_scores)
-    df = pd.DataFrame(
-        data,
-        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
-        index=categories
-    )
-    return df
+    return pd.DataFrame(data,
+                        columns=[dim["nom"].replace("Dimension ", "") for dim in dimensions],
+                        index=categories)
 
-def radar_plot(radar_df, labels, categories_labels):
-    palette = get_palette(len(categories_labels))
+def radar_plot(radar_df):
+    labels = radar_df.columns.tolist()
+    cat_labels = radar_df.index.tolist()
+    palette = get_palette(len(cat_labels))
     fig = go.Figure()
-    for idx, cat in enumerate(categories_labels):
-        values = radar_df.loc[cat].tolist()
-        values += values[:1]
+    for idx, cat in enumerate(cat_labels):
+        vals = radar_df.loc[cat].tolist() + [radar_df.loc[cat].iloc[0]]
         fig.add_trace(go.Scatterpolar(
-            r=values,
-            theta=labels + [labels[0]],
+            r=vals, theta=labels + [labels[0]],
             mode='lines+markers',
             name=cat,
-            line=dict(width=3, color=palette[idx]),
-            marker=dict(size=5, color=palette[idx]),
-            opacity=0.85,
-            marker=dict(size=5),
+            line=dict(color=palette[idx], width=3),
+            marker=dict(color=palette[idx], size=5),
             visible=False if idx > 0 else True
         ))
     frames = [
-        go.Frame(
-            data=[go.Scatterpolar(
-                r=radar_df.loc[categories_labels[j]].tolist() + [radar_df.loc[categories_labels[j]].tolist()[0]],
+        go.Frame(data=[
+            go.Scatterpolar(
+                r=radar_df.loc[cat].tolist() + [radar_df.loc[cat].iloc[0]],
                 theta=labels + [labels[0]],
+                line=dict(color=palette[j], width=3),
+                marker=dict(color=palette[j], size=5),
                 mode='lines+markers',
-                name=categories_labels[j],
-                line=dict(width=3, color=palette[j]),
-                marker=dict(size=5, color=palette[j]),
-                opacity=0.85,
-                visible=True if j <= i else False
-            ) for j in range(len(categories_labels))]
-        )
-        for i in range(len(categories_labels))
+                name=cat
+            )
+        ], name=cat)
+        for j, cat in enumerate(cat_labels)
     ]
     fig.frames = frames
-
     fig.update_layout(
-        polar=dict(
-            radialaxis=dict(visible=True, range=[0, 3.5], showticklabels=True, tickfont_size=13),
-            angularaxis=dict(tickfont=dict(size=15)),
-        ),
-        showlegend=True,
-        legend=dict(x=1.05, y=0.5, font=dict(size=12)),
-        width=630, height=520, margin=dict(l=30, r=200, t=20, b=20),
-        updatemenus=[{
-            "type": "buttons",
-            "showactive": False,
-            "y": 1.13,
-            "x": 0,
-            "xanchor": "left",
-            "yanchor": "top",
-            "buttons": [{
-                "label": "Dessiner",
-                "method": "animate",
-                "args": [None, {"frame": {"duration": 600, "redraw": True},
-                                "fromcurrent": True, "transition": {"duration": 200}}]
-            }],
-            "bgcolor": "#fff",
-            "bordercolor": "#027368",
-            "borderwidth": 1.8,
-            "font": {"color": "#027368", "size": 15}
-        }]
+        polar=dict(radialaxis=dict(range=[0,3.5]), angularaxis=dict(tickfont_size=13)),
+        width=500, height=480,
+        updatemenus=[dict(type="buttons", showactive=False,
+                           buttons=[dict(label="Dessiner", method="animate", args=[None])])]
     )
     return fig
 
-def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
-    bar_palette = get_palette(len(dim_labels))
-    bar_height = 0.65
-
-    scores = radar_df.iloc[cat_idx].values
-
+def bar_anim(df, title):
+    dim = df.columns.tolist()
+    cats = df.index.tolist()
+    palette = get_palette(len(dim))
     fig = go.Figure(
-        data=[go.Bar(
-            x=[None]*len(scores),
-            y=dim_labels,
-            orientation="h",
-            marker=dict(
-                color=bar_palette,
-                line=dict(color="#ECECEC", width=1.2)
-            ),
-            text=[""]*len(scores),
-            textposition="outside",
-            insidetextanchor="end",
-            hoverinfo="none",
-            width=[bar_height]*len(dim_labels)
-        )],
-        layout=go.Layout(
-            xaxis=dict(range=[0, 3.2], showgrid=True, gridcolor="#eee", dtick=0.5, tickfont=dict(size=15)),
-            yaxis=dict(tickfont=dict(size=18), color="#222"),
-            height=410,
-            margin=dict(l=110, r=60, t=60, b=60),
-            plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
-            updatemenus=[{
-                "type": "buttons",
-                "showactive": False,
-                "y": 1.25,
-                "x": -0.084,
-                "xanchor": "left",
-                "yanchor": "top",
-                "buttons": [{
-                    "label": "Dessiner",
-                    "method": "animate",
-                    "args": [None, {
-                        "frame": {"duration": 600, "redraw": True},
-                        "fromcurrent": True, "transition": {"duration": 200}
-                    }],
-                }],
-                "bgcolor": "#fff",
-                "bordercolor": "#027368",
-                "borderwidth": 1.8,
-                "font": {"color": "#027368", "size": 15}
-            }]
-        )
+        data=[go.Bar(x=[None]*len(dim), y=dim, orientation='h', marker=dict(color=palette))],
+        frames=[go.Frame(
+            data=[go.Bar(x=df.iloc[i].values, y=dim, orientation='h', marker=dict(color=palette))],
+            name=cat
+        ) for i, cat in enumerate(cats)]
     )
-
-    frames = []
-    for k in range(1, len(scores)+1):
-        frame_scores = list(scores[:k]) + [None]*(len(scores)-k)
-        frame_text = [str(v).replace('.', ',') if v is not None else '' for v in frame_scores]
-        frames.append(go.Frame(
-            data=[go.Bar(
-                x=frame_scores,
-                y=dim_labels,
-                orientation="h",
-                marker=dict(
-                    color=bar_palette,
-                    line=dict(color="#ECECEC", width=1.2)
-                ),
-                text=frame_text,
-                textposition="outside",
-                insidetextanchor="end",
-                hoverinfo="none",
-                width=[bar_height]*len(dim_labels)
-            )]
-        ))
-    fig.frames = frames
-
-    fig.update_layout(annotations=[])
+    fig.update_layout(
+        title=title,
+        xaxis=dict(range=[0, df.max().max()*1.1]),
+        height=350, width=500,
+        updatemenus=[dict(type="buttons", showactive=False,
+                           buttons=[dict(label="Dessiner", method="animate", args=[None])])]
+    )
     return fig
 
 def show_page_graphiques():
-    st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
-    labels = radar_df.columns.tolist()
-    categories_labels = radar_df.index.tolist()
 
-    categorie_a_supprimer = "Petits exploitants agricoles familiaux"
-    if categorie_a_supprimer in radar_df.index:
-        radar_df = radar_df.drop(categorie_a_supprimer)
-        categories_labels = [cat for cat in categories_labels if cat != categorie_a_supprimer]
+    st.markdown("### Radar animé – Note par dimension & catégorie")
+    st.plotly_chart(radar_plot(radar_df), use_container_width=True)
 
-    config = {
-        'displayModeBar': True,
-        'displaylogo': False,
-        'modeBarButtonsToRemove': [
-            'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
-            'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian',
-            'zoom3d', 'pan3d', 'resetCameraDefault3d', 'resetCameraLastSave3d',
-            'hoverClosest3d', 'orbitRotation', 'tableRotation', 'toggleSpikelines',
-            'sendDataToCloud', 'toggleHover', 'resetViews', 'resetViewMapbox',
-            'zoomInGeo', 'zoomOutGeo', 'resetGeo', 'hoverClosestGeo',
-            'editInChartStudio'
-        ],
-        'modeBarButtonsToAdd': ['toImage', 'fullscreen'],
-    }
+    st.markdown("### Bar chart animé – Note par dimension")
+    st.plotly_chart(bar_anim(radar_df, "Notes moyennes par dimension"), use_container_width=True)
 
-    radar_fig = radar_plot(radar_df, labels, categories_labels)
-    st.plotly_chart(radar_fig, use_container_width=True, config=config)
+    # --- Ajout du graphique "effectifs"
+    eff_df = pd.DataFrame(effectifs,
+                           columns=radar_df.columns, index=radar_df.index)
+    st.markdown("### Nombre de répondants par dimension & catégorie")
+    st.plotly_chart(bar_anim(eff_df, "Effectifs par dimension et catégorie"), use_container_width=True)
 
-    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
-    bar_fig = bar_chart_anim(radar_df, labels, categories_labels, cat_idx=0)
-    st.plotly_chart(bar_fig, use_container_width=True, config=config)
-
-if __name__ == "__main__" or "streamlit" in __name__:
+if __name__ == "__main__":
     show_page_graphiques()
