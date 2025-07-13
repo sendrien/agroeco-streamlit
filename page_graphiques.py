@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-from data_osae import dimensions, categories, effectifs  # effectifs importés
+import plotly.express as px
+from data_osae import dimensions, categories, effectifs, poids_relatif  # effectifs importés
 
 # GÉNÉRATION DYNAMIQUE D'UNE PALETTE DE COULEURS (exemple : Plotly, Matplotlib, ou personnalisée)
 def get_palette(n):
@@ -22,7 +23,6 @@ def get_paletteeffectif(n):
     from plotly.colors import qualitative
     base = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
     return base[:n] if n <= len(base) else base + [f'#{np.random.randint(0,0xFFFFFF):06X}' for _ in range(n)]
-
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
@@ -183,9 +183,6 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     fig.update_layout(annotations=[])
     return fig
 
-
-
-
 def get_effectifs_df(effectifs, dimensions, categories):
     return pd.DataFrame(
         effectifs,
@@ -260,7 +257,26 @@ def bar_effectifs_stacked_anim(eff_df):
     fig.frames = frames
     return fig
 
-
+def pie_poids_relatif(categories, poids_relatif):
+    fig = go.Figure(go.Pie(
+        labels=categories,
+        values=poids_relatif,
+        textinfo='label+percent',
+        textposition='outside',
+        insidetextorientation='radial',
+        hole=0,
+        marker=dict(line=dict(color='#fff', width=1)),
+        sort=False  # conserve l’ordre d'origine
+    ))
+    fig.update_layout(
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=500,
+        showlegend=True,
+        legend=dict(orientation='v', x=0.02, y=0.98, font=dict(size=12)),
+        title_text="Poids relatif des acteurs dans le processus de transition (en %)",
+        title_x=0.5
+    )
+    return fig
 
 
 
@@ -305,9 +321,13 @@ def show_page_graphiques():
     eff_df = get_effectifs_df(effectifs, dimensions, categories)
     eff_fig = bar_effectifs_stacked_anim(eff_df)
 
-    
-
     st.plotly_chart(eff_fig, use_container_width=True, config=config)
+
+
+    # Camembert du poids relatif
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs dans le processus de transition (en %)</h3>", unsafe_allow_html=True)
+    pie_fig = pie_poids_relatif(categories, poids_relatif)
+    st.plotly_chart(pie_fig, use_container_width=True, config={'displayModeBar': False})
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
