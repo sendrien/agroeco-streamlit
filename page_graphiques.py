@@ -115,22 +115,21 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             margin=dict(l=110, r=60, t=60, b=60),
             plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
             updatemenus=[{
-    "type": "buttons",
-    "showactive": False,
-    "y": 1.13,
-    "x": 1,
-    "xanchor": "left",
-    "yanchor": "top",
-    "buttons": [{
-        "label": "Dessiner",
-        "method": "animate",
-        "args": [None, {
-            "frame": {"duration": 900, "redraw": True},
-            "fromcurrent": True, "transition": {"duration": 350}
-        }],
+        "type": "buttons",
+        "showactive": False,
+        "y": 1.13,
+        "x": 1,
+        "xanchor": "left",
+        "yanchor": "top",
+        "buttons": [{
+            "label": "Dessiner",
+            "method": "animate",
+            "args": [None, {
+                "frame": {"duration": 900, "redraw": True},
+                "fromcurrent": True, "transition": {"duration": 350}
+            }],
+        }]
     }]
-}]
-
         ),
         frames=[
             go.Frame(
