@@ -34,9 +34,9 @@ def show_page_graphiques():
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
 
+    # --- Radar plot animé ---
     fig = go.Figure()
 
-    # Animation : chaque trace apparaît progressivement
     for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
@@ -48,10 +48,9 @@ def show_page_graphiques():
             line=dict(width=3),
             opacity=0.85,
             marker=dict(size=5),
-            visible=False if idx > 0 else True  # Premier visible au début
+            visible=False if idx > 0 else True
         ))
 
-    # Images/frames pour animation
     frames = [
         go.Frame(
             data=[go.Scatterpolar(
@@ -95,6 +94,43 @@ def show_page_graphiques():
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+    # --- Bar chart moderne groupé ---
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
+    bar_df = radar_df.copy()
+    bar_fig = go.Figure()
+
+    colors = ['#2980B9', '#F39C12', '#27AE60', '#C0392B', '#8E44AD']
+
+    for i, dim in enumerate(bar_df.columns):
+        bar_fig.add_trace(go.Bar(
+            x=bar_df.index,
+            y=bar_df[dim],
+            name=dim,
+            marker_color=colors[i % len(colors)],
+            text=bar_df[dim],
+            textposition='auto'
+        ))
+
+    bar_fig.update_layout(
+        barmode='group',
+        xaxis_title="Catégories d'acteurs",
+        yaxis_title="Note (moyenne sur la dimension)",
+        legend_title="Dimensions",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        ),
+        width=710, height=400,
+        margin=dict(l=10, r=10, t=20, b=40),
+        font=dict(size=13),
+        plot_bgcolor="#FAFAFA"
+    )
+
+    st.plotly_chart(bar_fig, use_container_width=True)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
