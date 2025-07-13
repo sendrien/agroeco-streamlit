@@ -28,15 +28,31 @@ def get_dimension_scores_per_categorie(dimensions, categories):
     )
     return df
 
+def get_global_scores_by_dimension(dimensions):
+    rows = []
+    for dim in dimensions:
+        scores = []
+        for indic in dim["indicateurs"]:
+            scores += [v for v in indic["scores"] if v is not None]
+        if scores:
+            mean = round(sum(scores) / len(scores), 1)
+        else:
+            mean = None
+        rows.append({
+            "Dimension": dim["nom"].replace("Dimension ", ""),
+            "Score": mean
+        })
+    df = pd.DataFrame(rows)
+    return df
+
 def show_page_graphiques():
+    # --- RADAR PLOT ---
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
 
     fig = go.Figure()
-
-    # Animation : chaque trace apparaît progressivement
     for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
@@ -48,10 +64,9 @@ def show_page_graphiques():
             line=dict(width=3),
             opacity=0.85,
             marker=dict(size=5),
-            visible=False if idx > 0 else True  # Premier visible au début
+            visible=False if idx > 0 else True
         ))
 
-    # Images/frames pour animation
     frames = [
         go.Frame(
             data=[go.Scatterpolar(
@@ -93,8 +108,47 @@ def show_page_graphiques():
             }]
         }]
     )
-
     st.plotly_chart(fig, use_container_width=True)
+
+    # --- BAR CHART "NOTE GLOBALE PAR DIMENSION" ---
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Note globale par dimension</h3>", unsafe_allow_html=True)
+    bar_df = get_global_scores_by_dimension(dimensions)
+    # Pour afficher comme sur ton image (de haut en bas), on inverse l'ordre
+    bar_df = bar_df.iloc[::-1].reset_index(drop=True)
+    couleurs = [
+        "#3B9CCC",  # Temporelle
+        "#FFD600",  # Territoriale
+        "#A5A5A5",  # Politique et sociale
+        "#F39C12",  # Economique
+        "#2980B9",  # Environnementale
+    ]
+    fig_bar = go.Figure(go.Bar(
+        x=bar_df["Score"],
+        y=bar_df["Dimension"],
+        orientation="h",
+        marker=dict(
+            color=couleurs,
+            line=dict(color="#ECECEC", width=1.6)
+        ),
+        text=bar_df["Score"].astype(str).str.replace('.', ','),
+        textposition="outside",
+        insidetextanchor="end",
+        hoverinfo="none"
+    ))
+
+    fig_bar.update_layout(
+        xaxis=dict(range=[2.35, 2.6], tickvals=[2.4, 2.5, 2.6], tickfont=dict(size=13), showgrid=False, color="white"),
+        yaxis=dict(tickfont=dict(size=13), categoryorder="array", categoryarray=bar_df["Dimension"].tolist(), color="white"),
+        plot_bgcolor="#232323",  # fond sombre
+        paper_bgcolor="#232323",
+        bargap=0.25,
+        width=400,
+        height=250,
+        margin=dict(l=75, r=25, t=25, b=40),
+        showlegend=False,
+    )
+
+    st.plotly_chart(fig_bar, use_container_width=False)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
