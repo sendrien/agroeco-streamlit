@@ -39,28 +39,25 @@ def show_page_graphiques():
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
     angles += angles[:1]  # fermer le polygone
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))  # Taille adaptée
+    fig, ax = plt.subplots(figsize=(4.2, 4.2), subplot_kw=dict(polar=True))  # <<< Taille réduite
 
-    # Couleurs pour différencier les catégories
-    colors = plt.cm.tab10.colors  # 10 couleurs distinctes
-
+    colors = plt.cm.tab10.colors
     for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
         ax.plot(angles, values, label=cat, color=color, linewidth=2)
-        # >>> On retire la coloration du fond :
-        # ax.fill(angles, values, color=color, alpha=0.12)
+        # pas de ax.fill !
 
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels, fontsize=13)
+    ax.set_xticklabels(labels, fontsize=11)
     ax.set_yticks([1, 1.5, 2, 2.5, 3])
-    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=12)
+    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=10)
     ax.set_ylim(0, 3.5)
-
-    plt.title("Note globale des dimensions par catégories d'acteurs", size=15, y=1.08, weight="bold")
-    ax.legend(loc="upper left", bbox_to_anchor=(1.02, 1), fontsize=11, frameon=False)
+    plt.title("Note globale des dimensions par catégories d'acteurs", size=13, y=1.08, weight="bold")
+    ax.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=9, frameon=False)
 
     st.pyplot(fig)
+
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
