@@ -221,7 +221,7 @@ def bar_effectifs_stacked_anim(eff_df):
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
-                "y": 1.13, "x": -0.6,
+                "y": 1.13, "x": -0.55,
                 "xanchor": "left", "yanchor": "top",
                 "buttons": [{
                     "label": "Dessiner",
