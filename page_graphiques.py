@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from data_osae import dimensions, categories
 
 def get_dimension_scores_per_categorie(dimensions, categories):
@@ -33,34 +33,68 @@ def show_page_graphiques():
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
-    N = len(labels)
-    angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
-    angles += angles[:1]
 
-    # DPI élevé + taille adaptée
-    fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True), dpi=140)
-    colors = plt.cm.tab10.colors
-    linewidth = 2.5
+    fig = go.Figure()
 
-    for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
+    # Animation : chaque trace apparaît progressivement
+    for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
-        ax.plot(angles, values, label=cat, color=color, linewidth=linewidth)
-        ax.fill(angles, values, color=color, alpha=0.09)
+        fig.add_trace(go.Scatterpolar(
+            r=values,
+            theta=labels + [labels[0]],
+            mode='lines+markers',
+            name=cat,
+            line=dict(width=3),
+            opacity=0.85,
+            marker=dict(size=5),
+            visible=False if idx > 0 else True  # Premier visible au début
+        ))
 
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels, fontsize=13, fontweight='bold')
-    ax.set_yticks([1, 1.5, 2, 2.5, 3])
-    ax.set_yticklabels([str(x) for x in [1, 1.5, 2, 2.5, 3]], fontsize=11)
-    ax.set_ylim(0, 3.5)
-    ax.grid(True, color="grey", linestyle="--", linewidth=0.7, alpha=0.7)
-    ax.spines['polar'].set_color('#027368')
-    ax.spines['polar'].set_linewidth(1.5)
+    # Images/frames pour animation
+    frames = [
+        go.Frame(
+            data=[go.Scatterpolar(
+                r=radar_df.loc[categories_labels[j]].tolist() + [radar_df.loc[categories_labels[j]].tolist()[0]],
+                theta=labels + [labels[0]],
+                mode='lines+markers',
+                name=categories_labels[j],
+                line=dict(width=3),
+                marker=dict(size=5),
+                opacity=0.85,
+                visible=True if j <= i else False
+            ) for j in range(len(categories_labels))]
+        )
+        for i in range(len(categories_labels))
+    ]
 
-    # Légende en dehors du radar
-    ax.legend(loc='center left', bbox_to_anchor=(1.05, 0.5), fontsize=10, frameon=False)
-    plt.tight_layout(pad=2.2)
-    st.pyplot(fig)
+    fig.frames = frames
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 3.5], showticklabels=True, tickfont_size=13),
+            angularaxis=dict(tickfont=dict(size=15)),
+        ),
+        showlegend=True,
+        legend=dict(x=1.05, y=0.5, font=dict(size=12)),
+        width=630, height=520, margin=dict(l=30, r=200, t=20, b=20),
+        updatemenus=[{
+            "type": "buttons",
+            "showactive": False,
+            "y": 1.10,
+            "x": 1.1,
+            "xanchor": "right",
+            "yanchor": "top",
+            "buttons": [{
+                "label": "Animer",
+                "method": "animate",
+                "args": [None, {"frame": {"duration": 600, "redraw": True},
+                                "fromcurrent": True, "transition": {"duration": 200}}],
+            }]
+        }]
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
