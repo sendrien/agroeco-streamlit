@@ -30,7 +30,6 @@ def get_dimension_scores_per_categorie(dimensions, categories):
 
 def radar_plot(radar_df, labels, categories_labels):
     fig = go.Figure()
-
     for idx, cat in enumerate(categories_labels):
         values = radar_df.loc[cat].tolist()
         values += values[:1]
@@ -44,7 +43,6 @@ def radar_plot(radar_df, labels, categories_labels):
             marker=dict(size=5),
             visible=False if idx > 0 else True  # Premier visible au début
         ))
-
     frames = [
         go.Frame(
             data=[go.Scatterpolar(
@@ -73,9 +71,9 @@ def radar_plot(radar_df, labels, categories_labels):
         updatemenus=[{
             "type": "buttons",
             "showactive": False,
-            "y": 1.10,
-            "x": 1.1,
-            "xanchor": "right",
+            "y": 1.13,
+            "x": 1,
+            "xanchor": "left",
             "yanchor": "top",
             "buttons": [{
                 "label": "Dessiner",
@@ -91,9 +89,11 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
     couleurs = [
         "#A5A5A5", "#FFD600", "#13B14A", "#F39C12", "#3B9CCC"
     ]
-    cat_idx = 0
-    scores = radar_df.iloc[cat_idx].values
     bar_height = 0.65
+    cat_idx = 0  # Index de la catégorie affichée au démarrage (ici la première)
+
+    # Données initiales (première catégorie)
+    scores = radar_df.iloc[cat_idx].values
 
     fig = go.Figure(
         data=[go.Bar(
@@ -110,27 +110,25 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
         layout=go.Layout(
             xaxis=dict(range=[0, 3.2], showgrid=True, gridcolor="#eee", dtick=0.5, tickfont=dict(size=15)),
             yaxis=dict(tickfont=dict(size=18), color="#222"),
-            # width=1100,  # Enlève width pour laisser Streamlit gérer, ou adapte si tu veux une largeur fixe
             height=410,
             margin=dict(l=110, r=60, t=60, b=60),
             plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
             updatemenus=[{
-    "type": "buttons",
-    "showactive": False,
-    "y": 1.13,
-    "x": 0,
-    "xanchor": "left",
-    "yanchor": "top",
-    "buttons": [{
-        "label": "Animer",
-        "method": "animate",
-        "args": [None, {
-            "frame": {"duration": 900, "redraw": True},
-            "fromcurrent": True, "transition": {"duration": 350}
-        }],
-    }]
-}]
-
+                "type": "buttons",
+                "showactive": False,
+                "y": 1.13,
+                "x": 1,
+                "xanchor": "left",
+                "yanchor": "top",
+                "buttons": [{
+                    "label": "Dessiner",
+                    "method": "animate",
+                    "args": [None, {
+                        "frame": {"duration": 900, "redraw": True},
+                        "fromcurrent": True, "transition": {"duration": 350}
+                    }],
+                }]
+            }]
         ),
         frames=[
             go.Frame(
@@ -145,7 +143,18 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
                     hoverinfo="none",
                     width=[bar_height]*len(dim_labels)
                 )],
-                name=cat_labels[i]
+                name=cat_labels[i],
+                layout=go.Layout(
+                    annotations=[
+                        dict(
+                            xref="paper", yref="paper",
+                            x=0.5, y=1.13, showarrow=False,
+                            xanchor="center", yanchor="bottom",
+                            text=f"<b>{cat_labels[i]}</b>",
+                            font=dict(size=22, color="#027368")
+                        )
+                    ]
+                )
             )
             for i in range(len(cat_labels))
         ]
@@ -163,19 +172,6 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             )
         ]
     )
-    # Mettre à jour pour chaque animation (pour que le titre suive)
-    for idx, frame in enumerate(fig.frames):
-        frame.layout = go.Layout(
-            annotations=[
-                dict(
-                    xref="paper", yref="paper",
-                    x=0.5, y=1.13, showarrow=False,
-                    xanchor="center", yanchor="bottom",
-                    text=f"<b>{cat_labels[idx]}</b>",
-                    font=dict(size=22, color="#027368")
-                )
-            ]
-        )
     return fig
 
 def show_page_graphiques():
@@ -211,4 +207,3 @@ def show_page_graphiques():
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
-
