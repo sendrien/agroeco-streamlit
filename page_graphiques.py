@@ -89,10 +89,12 @@ def radar_plot(radar_df, labels, categories_labels):
 
 def bar_chart_anim(radar_df, dim_labels, cat_labels):
     couleurs = [
-        "#3B9CCC", "#F39C12", "#13B14A", "#FFD600", "#A5A5A5", "#2980B9", "#DE3163"
+        "#A5A5A5", "#FFD600", "#13B14A", "#F39C12", "#3B9CCC"
     ]
     cat_idx = 0
     scores = radar_df.iloc[cat_idx].values
+    bar_height = 0.65  # Largeur des barres pour plus de lisibilité
+
     fig = go.Figure(
         data=[go.Bar(
             x=scores,
@@ -102,18 +104,19 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
             text=[str(v).replace('.', ',') if v is not None else '' for v in scores],
             textposition="outside",
             insidetextanchor="end",
-            hoverinfo="none"
+            hoverinfo="none",
+            width=[bar_height]*len(dim_labels)
         )],
         layout=go.Layout(
-            xaxis=dict(range=[min(radar_df.min())-0.1, max(radar_df.max())+0.1], showgrid=False, color="#222", title=""),
-            yaxis=dict(tickfont=dict(size=13), color="#222", title=""),
-            width=480, height=280, margin=dict(l=90, r=40, t=50, b=40),
+            xaxis=dict(range=[0, 3.2], showgrid=True, gridcolor="#eee", dtick=0.5),
+            yaxis=dict(tickfont=dict(size=15), color="#222"),
+            width=580, height=330, margin=dict(l=100, r=50, t=55, b=40),
             plot_bgcolor="#fff", paper_bgcolor="#fff", showlegend=False,
             updatemenus=[{
                 "type": "buttons",
                 "showactive": False,
-                "y": 1.16,
-                "x": 1.12,
+                "y": 1.13,
+                "x": 1.13,
                 "xanchor": "right",
                 "yanchor": "top",
                 "buttons": [{
@@ -136,35 +139,42 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
                     text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[i].values],
                     textposition="outside",
                     insidetextanchor="end",
-                    hoverinfo="none"
+                    hoverinfo="none",
+                    width=[bar_height]*len(dim_labels)
                 )],
-                name=cat_labels[i],
-                layout=go.Layout(
-                    annotations=[
-                        dict(
-                            xref="paper", yref="paper",
-                            x=0.0, y=1.18, showarrow=False,
-                            xanchor="left", yanchor="top",
-                            text=f"<span style='font-size: 18px; font-weight: 600; color: {couleurs[i%len(couleurs)]}'>{cat_labels[i]}</span>",
-                        )
-                    ]
-                )
+                name=cat_labels[i]
             )
             for i in range(len(cat_labels))
         ]
     )
 
-    # Titre de la catégorie (au-dessus du graphique, sans chevauchement, bien lisible)
+    # Afficher le titre DANS le plot, bien placé au-dessus de la première barre
     fig.update_layout(
         annotations=[
             dict(
-                xref="paper", yref="paper",
-                x=0.0, y=1.18, showarrow=False,
-                xanchor="left", yanchor="top",
-                text=f"<span style='font-size: 18px; font-weight: 600; color: {couleurs[cat_idx%len(couleurs)]}'>{cat_labels[cat_idx]}</span>",
+                xref="paper", yref="y",
+                x=0.02, y=dim_labels[0], showarrow=False,
+                xanchor="left", yanchor="bottom",
+                text=f"<b>{cat_labels[cat_idx]}</b>",
+                font=dict(size=20, color="#027368")
             )
         ]
     )
+
+    # On met à jour l'annotation à chaque frame de l'animation
+    for idx, frame in enumerate(fig.frames):
+        frame.layout = go.Layout(
+            annotations=[
+                dict(
+                    xref="paper", yref="y",
+                    x=0.02, y=dim_labels[0], showarrow=False,
+                    xanchor="left", yanchor="bottom",
+                    text=f"<b>{cat_labels[idx]}</b>",
+                    font=dict(size=20, color="#027368")
+                )
+            ]
+        )
+
     return fig
 
 
