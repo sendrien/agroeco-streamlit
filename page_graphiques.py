@@ -30,7 +30,6 @@ def get_dimension_scores_per_categorie(dimensions, categories):
 
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
-
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
@@ -38,8 +37,9 @@ def show_page_graphiques():
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
     angles += angles[:1]
 
-    # Figure plus compacte
-    fig, ax = plt.subplots(figsize=(2.2, 2.2), subplot_kw=dict(polar=True))
+    # Figure compacte mais assez large pour la légende à droite
+    fig = plt.figure(figsize=(5, 2.5))
+    ax = plt.subplot(121, polar=True)  # 1 ligne, 2 colonnes, radar à gauche
 
     colors = plt.cm.tab10.colors
     for idx, (cat, color) in enumerate(zip(categories_labels, colors)):
@@ -55,16 +55,14 @@ def show_page_graphiques():
     ax.spines['polar'].set_color('#000')
     ax.spines['polar'].set_linewidth(1)
 
-    # Légende compacte sous le graphique
-    ax.legend(loc='lower center', bbox_to_anchor=(0.5, -0.18), fontsize=7, frameon=False, ncol=1)
+    # Ajout de la légende à droite
+    plt.subplot(122)
+    plt.axis('off')
+    handles, labels_legend = ax.get_legend_handles_labels()
+    plt.legend(handles, labels_legend, loc='center left', fontsize=7, frameon=False)
 
-    # Pas de titre
-    plt.tight_layout(pad=0.1)
-    
-    # Centrage horizontal dans Streamlit
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.pyplot(fig)
+    plt.tight_layout(pad=0.4)
+    st.pyplot(fig)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
