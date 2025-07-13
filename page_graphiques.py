@@ -177,21 +177,37 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
         )
     return fig
 
-
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
 
+    # Config bar d'outils Plotly : supprime tous les boutons inutiles
+    config = {
+        'displayModeBar': True,
+        'displaylogo': False,
+        'modeBarButtonsToRemove': [
+            'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+            'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian',
+            'zoom3d', 'pan3d', 'resetCameraDefault3d', 'resetCameraLastSave3d',
+            'hoverClosest3d', 'orbitRotation', 'tableRotation', 'toggleSpikelines',
+            'sendDataToCloud', 'toggleHover', 'resetViews', 'resetViewMapbox',
+            'zoomInGeo', 'zoomOutGeo', 'resetGeo', 'hoverClosestGeo',
+            'editInChartStudio'
+        ],
+        'modeBarButtonsToAdd': ['toImage', 'fullscreen'],
+    }
+
     # 1. RADAR PLOT ANIMÉ
     radar_fig = radar_plot(radar_df, labels, categories_labels)
-    st.plotly_chart(radar_fig, use_container_width=True)
+    st.plotly_chart(radar_fig, use_container_width=True, config=config)
 
     # 2. BAR CHART ANIMÉ
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     bar_fig = bar_chart_anim(radar_df, labels, categories_labels)
-    st.plotly_chart(bar_fig, use_container_width=False)
+    st.plotly_chart(bar_fig, use_container_width=True, config=config)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
+
