@@ -133,7 +133,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 "bgcolor": "#fff",
                 "bordercolor": "#027368",
                 "borderwidth": 1.8,
-        "font": {"color": "blue", "size": 15}
+                "font": {"color": "#027368", "size": 15}
             }]
         )
     )
