@@ -356,7 +356,7 @@ def show_page_graphiques():
     # Camembert animé du poids relatif
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs (en %)</h3>", unsafe_allow_html=True)
     pie_fig = pie_poids_relatif_anim(categories, poids_relatif)
-    st.plotly_chart(pie_fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(pie_fig, use_container_width=True, config={'displayModeBar': True})
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
