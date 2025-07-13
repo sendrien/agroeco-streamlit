@@ -80,7 +80,11 @@ def radar_plot(radar_df, labels, categories_labels):
                 "method": "animate",
                 "args": [None, {"frame": {"duration": 600, "redraw": True},
                                 "fromcurrent": True, "transition": {"duration": 200}}]
-            }]
+            }],
+            "bgcolor": "#fff",
+            "bordercolor": "#027368",
+            "borderwidth": 1.8,
+            "font": {"color": "#027368", "size": 15}
         }]
     )
     return fig
