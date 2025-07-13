@@ -22,7 +22,7 @@ def get_paletteeffectif(n):
     from plotly.colors import qualitative
     base = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
     if n <= len(base):
-        return base[:n]
+        return base[:]
     import random
     return ['#'+''.join(random.choices('0123456789ABCDEF', k=6)) for _ in range(n)]
 
