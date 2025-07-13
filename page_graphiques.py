@@ -292,7 +292,7 @@ def pie_poids_relatif_anim(categories, poids_relatif):
         updatemenus=[{
             "type": "buttons",
             "showactive": False,
-            "x": 0.06, "y": 1.1,
+            "x": 0.04, "y": 1.1,
             "xanchor": "left", "yanchor": "top",
             "buttons": [{
                 "label": "Dessiner",
