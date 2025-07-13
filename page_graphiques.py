@@ -33,68 +33,73 @@ def show_page_graphiques():
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
     labels = radar_df.columns.tolist()
     categories_labels = radar_df.index.tolist()
+    colors = [
+        "#4e79a7", "#f28e2b", "#e15759", "#76b7b2", 
+        "#59a14f", "#edc948", "#b07aa1"
+    ]
 
-    fig = go.Figure()
-
-    # Animation : chaque trace apparaît progressivement
-    for idx, cat in enumerate(categories_labels):
-        values = radar_df.loc[cat].tolist()
-        values += values[:1]
-        fig.add_trace(go.Scatterpolar(
+    # Animation : apparition progressive des courbes
+    frames = []
+    data_init = []
+    for i, cat in enumerate(categories_labels):
+        values = radar_df.loc[cat].tolist() + [radar_df.loc[cat].tolist()[0]]
+        trace = go.Scatterpolar(
             r=values,
             theta=labels + [labels[0]],
             mode='lines+markers',
             name=cat,
-            line=dict(width=3),
-            opacity=0.85,
-            marker=dict(size=5),
-            visible=False if idx > 0 else True  # Premier visible au début
-        ))
+            line=dict(width=3, color=colors[i % len(colors)]),
+            marker=dict(size=7),
+            opacity=0.9 if i == 0 else 0,  # Seule la première courbe affichée au début
+        )
+        data_init.append(trace)
 
-    # Images/frames pour animation
-    frames = [
-        go.Frame(
-            data=[go.Scatterpolar(
-                r=radar_df.loc[categories_labels[j]].tolist() + [radar_df.loc[categories_labels[j]].tolist()[0]],
+    for k in range(1, len(categories_labels)+1):
+        data = []
+        for i, cat in enumerate(categories_labels):
+            values = radar_df.loc[cat].tolist() + [radar_df.loc[cat].tolist()[0]]
+            data.append(go.Scatterpolar(
+                r=values,
                 theta=labels + [labels[0]],
                 mode='lines+markers',
-                name=categories_labels[j],
-                line=dict(width=3),
-                marker=dict(size=5),
-                opacity=0.85,
-                visible=True if j <= i else False
-            ) for j in range(len(categories_labels))]
-        )
-        for i in range(len(categories_labels))
-    ]
+                name=cat,
+                line=dict(width=3, color=colors[i % len(colors)]),
+                marker=dict(size=7),
+                opacity=0.9 if i < k else 0  # On affiche progressivement
+            ))
+        frames.append(go.Frame(data=data, name=str(k)))
 
-    fig.frames = frames
+    fig = go.Figure(
+        data=data_init,
+        frames=frames
+    )
 
     fig.update_layout(
         polar=dict(
             radialaxis=dict(visible=True, range=[0, 3.5], showticklabels=True, tickfont_size=13),
-            angularaxis=dict(tickfont=dict(size=15)),
+            angularaxis=dict(tickfont=dict(size=16), rotation=80, direction='clockwise'),
         ),
         showlegend=True,
-        legend=dict(x=1.05, y=0.5, font=dict(size=12)),
-        width=630, height=520, margin=dict(l=30, r=200, t=20, b=20),
+        legend=dict(x=1.05, y=0.5, font=dict(size=12), borderwidth=0, orientation='v'),
+        width=680,
+        height=520,
+        margin=dict(l=30, r=180, t=20, b=20),
         updatemenus=[{
             "type": "buttons",
             "showactive": False,
-            "y": 1.10,
-            "x": 1.1,
+            "y": 1.1,
+            "x": 1.13,
             "xanchor": "right",
             "yanchor": "top",
             "buttons": [{
                 "label": "Animer",
                 "method": "animate",
-                "args": [None, {"frame": {"duration": 600, "redraw": True},
-                                "fromcurrent": True, "transition": {"duration": 200}}],
+                "args": [None, {"frame": {"duration": 700, "redraw": True},
+                                "fromcurrent": True, "transition": {"duration": 250}}],
             }]
         }]
     )
-
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=False)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
