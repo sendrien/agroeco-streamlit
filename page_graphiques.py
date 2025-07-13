@@ -87,21 +87,21 @@ def radar_plot(radar_df, labels, categories_labels):
 
 def bar_chart_anim(radar_df, dim_labels, cat_labels):
     couleurs = [
-        "#A5A5A5", "#FFD600", "#13B14A", "#F39C12", "#3B9CCC"
+        "#3B9CCC", "#F39C12", "#13B14A", "#FFD600", "#A5A5A5"
     ]
     bar_height = 0.65
-    cat_idx = 0  # Index de la catégorie affichée au démarrage (ici la première)
-
-    # Données initiales (première catégorie)
-    scores = radar_df.iloc[cat_idx].values
+    cat_idx = 0  # Index catégorie affichée au démarrage
 
     fig = go.Figure(
         data=[go.Bar(
-            x=scores,
+            x=radar_df.iloc[cat_idx].values,
             y=dim_labels,
             orientation="h",
-            marker=dict(color=couleurs[:len(dim_labels)], line=dict(color="#ECECEC", width=1.2)),
-            text=[str(v).replace('.', ',') if v is not None else '' for v in scores],
+            marker=dict(
+                color=couleurs,  # On applique TOUTES les couleurs dans l'ordre pour chaque dimension
+                line=dict(color="#ECECEC", width=1.2)
+            ),
+            text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[cat_idx].values],
             textposition="outside",
             insidetextanchor="end",
             hoverinfo="none",
@@ -136,7 +136,10 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
                     x=radar_df.iloc[i].values,
                     y=dim_labels,
                     orientation="h",
-                    marker=dict(color=couleurs[:len(dim_labels)], line=dict(color="#ECECEC", width=1.2)),
+                    marker=dict(
+                        color=couleurs,  # Toujours les mêmes couleurs pour chaque dimension
+                        line=dict(color="#ECECEC", width=1.2)
+                    ),
                     text=[str(v).replace('.', ',') if v is not None else '' for v in radar_df.iloc[i].values],
                     textposition="outside",
                     insidetextanchor="end",
@@ -173,6 +176,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels):
         ]
     )
     return fig
+
 
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
