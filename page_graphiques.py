@@ -125,6 +125,7 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
                 "buttons": [{
                     "label": "Dessiner",
                     "method": "animate",
+                    "color": "blue",
                     "args": [None, {
                         "frame": {"duration": 600, "redraw": True},
                         "fromcurrent": True, "transition": {"duration": 200}
