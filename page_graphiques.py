@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-from data_osae import dimensions, categories
+from data_osae import dimensions, categories, effectifs  # effectifs importés
 
 # GÉNÉRATION DYNAMIQUE D'UNE PALETTE DE COULEURS (exemple : Plotly, Matplotlib, ou personnalisée)
 def get_palette(n):
@@ -17,6 +17,14 @@ def get_palette(n):
         import random
         def random_color(): return '#'+''.join(random.choices('0123456789ABCDEF', k=6))
         return [random_color() for _ in range(n)]
+
+def get_paletteeffectif(n):
+    from plotly.colors import qualitative
+    base = qualitative.Plotly + qualitative.Dark24 + qualitative.Light24
+    if n <= len(base):
+        return base[:n]
+    import random
+    return ['#'+''.join(random.choices('0123456789ABCDEF', k=6)) for _ in range(n)]
 
 def get_dimension_scores_per_categorie(dimensions, categories):
     data = []
@@ -177,6 +185,48 @@ def bar_chart_anim(radar_df, dim_labels, cat_labels, cat_idx=0):
     fig.update_layout(annotations=[])
     return fig
 
+
+# Bar chart animé des effectifs
+def bar_chart_effectifs(effectifs_df):
+    dim_labels = effectifs_df.columns.tolist()
+    cat_labels = effectifs_df.index.tolist()
+    palette = get_palette(len(dim_labels))
+    fig = go.Figure(
+        data=[go.Bar(x=[None]*len(dim_labels),
+                     y=dim_labels,
+                     orientation='h',
+                     marker=dict(color=palette, line=dict(color="#EEE", width=1.2)),
+                     text=['']*len(dim_labels),
+                     textposition='outside',
+                     hoverinfo='none')]
+    )
+    frames = []
+    for k in range(1, len(dim_labels)+1):
+        xs = list(effectifs_df.iloc[0][:k]) + [None]*(len(dim_labels)-k)
+        texts = [str(v) for v in xs]
+        frames.append(go.Frame(data=[go.Bar(x=xs, y=dim_labels,
+                                            orientation='h',
+                                            marker=dict(color=palette, line=dict(color="#EEE", width=1.2)),
+                                            text=texts,
+                                            textposition='outside')]))
+    fig.frames = frames
+    fig.update_layout(
+        xaxis=dict(range=[0, effectifs_df.values.max()*1.1], gridcolor="#eee"),
+        yaxis=dict(tickfont=dict(size=15)),
+        plot_bgcolor="#fff", paper_bgcolor="#fff",
+        height=400,
+        updatemenus=[{
+            'type':'buttons','showactive':False,
+            'buttons':[{
+                'label':'Dessiner',
+                'method':'animate',
+                'args':[None, {'frame':{'duration':600,'redraw':True},
+                              'transition':{'duration':200}}]
+            }]
+        }]
+    )
+    return fig
+
 def show_page_graphiques():
     st.markdown("<h3 style='color:#027368;'>Radar plot : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     radar_df = get_dimension_scores_per_categorie(dimensions, categories)
@@ -209,6 +259,11 @@ def show_page_graphiques():
     st.markdown("<h3 style='color:#027368; margin-top:2em;'>Bar chart : Note globale des dimensions par catégories d'acteurs</h3>", unsafe_allow_html=True)
     bar_fig = bar_chart_anim(radar_df, labels, categories_labels, cat_idx=0)
     st.plotly_chart(bar_fig, use_container_width=True, config=config)
+
+    # Ajout du graphique effectifs
+    eff_df = pd.DataFrame(effectifs, columns=labels, index=categories)
+    st.markdown("### Nombre de répondants par dimension")
+    st.plotly_chart(bar_chart_effectifs(eff_df), use_container_width=True, config=config)
 
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
