@@ -39,7 +39,7 @@ def show_page_graphiques():
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
     angles += angles[:1]  # fermer le polygone
 
-    fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))  # Taille adaptée
 
     # Couleurs pour différencier les catégories
     colors = plt.cm.tab10.colors  # 10 couleurs distinctes
@@ -48,7 +48,8 @@ def show_page_graphiques():
         values = radar_df.loc[cat].tolist()
         values += values[:1]
         ax.plot(angles, values, label=cat, color=color, linewidth=2)
-        ax.fill(angles, values, color=color, alpha=0.12)
+        # >>> On retire la coloration du fond :
+        # ax.fill(angles, values, color=color, alpha=0.12)
 
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(labels, fontsize=13)
@@ -61,6 +62,5 @@ def show_page_graphiques():
 
     st.pyplot(fig)
 
-# Utilisation dans la page
 if __name__ == "__main__" or "streamlit" in __name__:
     show_page_graphiques()
