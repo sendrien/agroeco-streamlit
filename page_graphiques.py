@@ -53,7 +53,7 @@ def radar_plot(radar_df, labels, categories_labels):
             line=dict(width=3, color=palette[idx]),
             marker=dict(size=5, color=palette[idx]),
             opacity=0.85,
-            marker=dict(size=5),
+            
             visible=False if idx > 0 else True
         ))
     frames = [
