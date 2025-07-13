@@ -287,7 +287,7 @@ def pie_poids_relatif_anim(categories, poids_relatif):
         height=500,
         showlegend=True,
         legend=dict(orientation='v', x=0.02, y=0.98, font=dict(size=12)),
-        title_text="Poids relatif des acteurs dans le processus de transition (en %)",
+        #title_text="Poids relatif des acteurs dans le processus de transition (en %)",
         title_x=0.5,
         updatemenus=[{
             "type": "buttons",
@@ -354,7 +354,7 @@ def show_page_graphiques():
 
     # Camembert du poids relatif
     # Camembert animé du poids relatif
-    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs (en %)</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#027368; margin-top:2em;'>Poids relatif des acteurs dans le processus de transition (en %)</h3>", unsafe_allow_html=True)
     pie_fig = pie_poids_relatif_anim(categories, poids_relatif)
     st.plotly_chart(pie_fig, use_container_width=True, config={'displayModeBar': True})
 
