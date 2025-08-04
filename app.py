@@ -4,7 +4,7 @@ from page_resume import show_page_resume
 from page_graphiques import show_page_graphiques
 
 st.markdown(
-        "<h1 class='osae-main-title'>Outil Statistique Agro-Eco (OSA)</h1>",
+        "<h1 class='osae-main-title'>Outil Statistique Agro-Eco (OSAE)</h1>",
         unsafe_allow_html=True,
     )
 st.markdown("""
