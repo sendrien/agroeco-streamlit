@@ -2,13 +2,37 @@ import streamlit as st
 from page_resultats import show_page_resultats
 from page_resume import show_page_resume
 from page_graphiques import show_page_graphiques
-# --- Ingestion KoBo (à coller dans app.py)
-import requests, pandas as pd, streamlit as st
 
-st.markdown(
-        "<h1 class='osae-main-title'>Outil Agro Eco</h1>",
-        unsafe_allow_html=True,
-    )
+# --- Ingestion KoBo ---
+import requests
+import pandas as pd
+
+# ⚠️ Toujours configurer la page AVANT tout rendu Streamlit
+st.set_page_config(page_title="Outil Statistique Agro-Economie (OSAE)", layout="wide")
+
+# --- Masquer GitHub/Fork & "Hosted with Streamlit" + footer/menu Streamlit ---
+st.markdown("""
+<style>
+/* Icônes d’action du header (Fork / GitHub…) */
+header [data-testid="stHeaderActionElements"] { display: none !important; }
+
+/* Badge/Widget en bas à droite ("Hosted with Streamlit", avatar, etc.) */
+.stApp [data-testid="stStatusWidget"] { display: none !important; }
+
+/* Anciennes classes (compat) */
+.stApp .viewerBadge_container__1QSob { display: none !important; }
+.stApp .viewerBadge_link__qYCB_      { display: none !important; }
+
+/* Footer et menu par défaut Streamlit */
+footer { visibility: hidden !important; }
+#MainMenu { visibility: hidden !important; }
+
+/* Filets/décorations éventuels */
+.stApp [data-testid="stDecoration"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
+
+# --- Styles globaux de l'app ---
 st.markdown("""
     <style>
     html, body, .stApp { background: #fff !important; }
@@ -119,12 +143,12 @@ st.markdown("""
         transition: background 0.5s;
     }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
+# --- Titre
+st.markdown("<h1 class='osae-main-title'>Outil Agro Eco</h1>", unsafe_allow_html=True)
 
-st.set_page_config(page_title="Outil Statistique Agro-Economie (OSAE)", layout="wide")
-
-# Onglets principaux
+# --- Onglets principaux
 tab1, tab2, tab3 = st.tabs(["📋 Syntèse structurée des résultats", "📝 Résumé", "📊 Graphiques"])
 
 with tab1:
@@ -136,9 +160,7 @@ with tab2:
 with tab3:
     show_page_graphiques()
 
-
-
-
+# --- KoBo fetch (cache 1h) ---
 @st.cache_data(ttl=3600)
 def fetch_kobo(asset_uid: str, base_url: str = None) -> pd.DataFrame:
     token = st.secrets["KOBO_TOKEN"]
@@ -159,8 +181,7 @@ df_kobo = None
 if asset_uid:
     df_kobo = fetch_kobo(asset_uid)
 
-
-# --- FOOTER ---
+# --- Footer personnalisé (reste visible) ---
 st.markdown("""
     <style>
     .footer {
@@ -178,10 +199,9 @@ st.markdown("""
         font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     }
     @media (max-width: 700px) {
-        .footer { font-size: 0.93rem; padding: 8px 0 5px 0;}
+        .footer { font-size: 0.93rem; padding: 8px 0 5px 0; }
     }
     </style>
-    
 """, unsafe_allow_html=True)
 
 st.markdown("""
