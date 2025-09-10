@@ -2,6 +2,8 @@ import streamlit as st
 from page_resultats import show_page_resultats
 from page_resume import show_page_resume
 from page_graphiques import show_page_graphiques
+# --- Ingestion KoBo (à coller dans app.py)
+import requests, pandas as pd, streamlit as st
 
 st.markdown(
         "<h1 class='osae-main-title'>Outil Agro Eco</h1>",
@@ -134,6 +136,28 @@ with tab2:
 with tab3:
     show_page_graphiques()
 
+
+
+
+@st.cache_data(ttl=3600)
+def fetch_kobo(asset_uid: str, base_url: str = None) -> pd.DataFrame:
+    token = st.secrets["KOBO_TOKEN"]
+    base = base_url or st.secrets.get("KOBO_API_BASE", "https://kf.kobotoolbox.org")
+    url = f"{base}/api/v2/assets/{asset_uid}/data/?format=json"
+    r = requests.get(url, headers={"Authorization": f"Token {token}"}, timeout=60)
+    r.raise_for_status()
+    payload = r.json().get("results", [])
+    return pd.json_normalize(payload)
+
+with st.sidebar:
+    st.subheader("Données KoBo")
+    asset_uid = st.text_input("Asset UID", value="", placeholder="aBCDeFg123...")
+    if st.button("🔄 Rafraîchir KoBo"):
+        fetch_kobo.clear()  # vide le cache
+
+df_kobo = None
+if asset_uid:
+    df_kobo = fetch_kobo(asset_uid)
 
 
 # --- FOOTER ---
