@@ -235,6 +235,6 @@ if asset_uid:
 # --- Footer personnalisé ---
 st.markdown("""
     <div class="footer">
-        © 2025 OSAE — Outil Statistique Agro-Economie · Design accessible et réactif
+        © 2025 OAE — Outil Agro-Economie
     </div>
 """, unsafe_allow_html=True)
