@@ -6,20 +6,22 @@ from page_graphiques import show_page_graphiques
 # --- Ingestion KoBo ---
 import requests
 import pandas as pd
+import streamlit.components.v1 as components
 
-# ⚠️ Toujours configurer la page AVANT tout rendu Streamlit
+# ⚠️ Configurer la page AVANT tout rendu
 st.set_page_config(page_title="Outil Statistique Agro-Economie (OSAE)", layout="wide")
 
-# --- Masquer GitHub/Fork & "Hosted with Streamlit" + footer/menu Streamlit ---
+# --- Masquage GitHub/Fork & "Hosted with Streamlit" (CSS + JS robuste) ---
 st.markdown("""
 <style>
-/* Icônes d’action du header (Fork / GitHub…) */
+/* Icônes d’action du header (Fork / GitHub / Share…) */
 header [data-testid="stHeaderActionElements"] { display: none !important; }
+div[data-testid="stToolbar"] { display: none !important; }  /* compat */
 
 /* Badge/Widget en bas à droite ("Hosted with Streamlit", avatar, etc.) */
 .stApp [data-testid="stStatusWidget"] { display: none !important; }
 
-/* Anciennes classes (compat) */
+/* Anciennes classes (compatibilité versions) */
 .stApp .viewerBadge_container__1QSob { display: none !important; }
 .stApp .viewerBadge_link__qYCB_      { display: none !important; }
 
@@ -31,6 +33,39 @@ footer { visibility: hidden !important; }
 .stApp [data-testid="stDecoration"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
+
+# JS : retire les éléments même s’ils sont ré-injectés plus tard (MutationObserver)
+components.html("""
+<script>
+(function(){
+  function hideAll(){
+    const selectors = [
+      'header [data-testid="stHeaderActionElements"]',
+      'div[data-testid="stToolbar"]',
+      'div[data-testid="stStatusWidget"]',
+      '.viewerBadge_container__1QSob',
+      '.viewerBadge_link__qYCB_',
+      'a[aria-label="View source on GitHub"]',
+      'button[title="Fork"]'
+    ];
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => el.style.display = 'none');
+    });
+    // Masquer tout élément texte résiduel "Hosted with Streamlit" / "Fork"
+    const textHiders = document.querySelectorAll('div,section,span,a,button');
+    textHiders.forEach(el => {
+      const t = (el.innerText || '').trim();
+      if (/Hosted with Streamlit/i.test(t) || /^Fork$/i.test(t)) {
+        el.style.display = 'none';
+      }
+    });
+  }
+  hideAll();
+  const obs = new MutationObserver(hideAll);
+  obs.observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+""", height=0)
 
 # --- Styles globaux de l'app ---
 st.markdown("""
@@ -181,7 +216,7 @@ df_kobo = None
 if asset_uid:
     df_kobo = fetch_kobo(asset_uid)
 
-# --- Footer personnalisé (reste visible) ---
+# --- Footer personnalisé ---
 st.markdown("""
     <style>
     .footer {
