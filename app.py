@@ -15,6 +15,18 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- Healthcheck / Keep-alive ultra-léger ---
+def _get_query_params():
+    try:
+        return st.query_params  # versions récentes
+    except Exception:
+        return st.experimental_get_query_params()  # compat anciennes
+
+_params = _get_query_params()
+if "ping" in _params:
+    st.write("ok")
+    st.stop()
+
 # --- Masquage GitHub/Fork & "Hosted with Streamlit" (CSS + JS robuste) ---
 st.markdown("""
 <style>
